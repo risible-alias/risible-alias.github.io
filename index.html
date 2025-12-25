@@ -77,12 +77,12 @@
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 1.5rem;
     }
-
     .gallery img {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      height: auto;
+      object-fit: contain;
       border-radius: 6px;
+      transition: transform 0.35s ease, opacity 0.35s ease;
       opacity: 0;
       transform: translateY(20px) scale(0.98);
       animation: fadeUp 0.8s ease-out forwards;
@@ -131,7 +131,6 @@
   <section>
     <div class="section-title">Selected work</div>
     <div class="gallery">
-      <img src="images/green_bee_eater.jpeg" alt="" />
       <img src="images/monke.jpeg" alt="" />
       <img src="images/rice_paddy.jpeg" alt="" />
       <img src="images/twomonkeys.jpeg" alt="" />
