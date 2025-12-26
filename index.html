@@ -4,17 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Risible Alias</title>
-    <style>
-        .gallery-item img {
-          opacity: 0;
-          transition: opacity 0.45s ease;
-        }
-        
-        /* When loaded */
-        .gallery-item img.is-loaded {
-          opacity: 1;
-        }
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
 
+    <style>
         :root {
             /* Neutral Middle-Gray Palette */
             --bg-color: #333333;
@@ -33,25 +28,19 @@
             padding: 0;
             box-sizing: border-box;
         }
-        <script>
-          document.querySelectorAll('.gallery-item img').forEach(img => {
-            if (img.complete) {
-              // Image was already cached
-              img.classList.add('is-loaded');
-            } else {
-              img.addEventListener('load', () => {
-                img.classList.add('is-loaded');
-              }, { once: true });
-            }
-          });
-        </script>
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Montserrat', sans-serif;
             background: var(--bg-color);
             color: var(--text-main);
             line-height: 1.6;
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            overflow-x: hidden;
+        }
+
+        /* Typography Overrides */
+        h1, h2, h3 {
+            font-family: 'Cormorant Garamond', serif;
+            letter-spacing: 0.05em;
         }
 
         /* Minimal Navigation */
@@ -70,9 +59,9 @@
         nav a {
             color: var(--text-muted);
             text-decoration: none;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
             transition: color 0.3s ease;
         }
 
@@ -80,17 +69,17 @@
             color: var(--accent);
         }
 
-        /* Minimal About Section */
+        /* About Section */
         .about-section {
             max-width: 600px;
-            margin: 2rem auto 4rem;
+            margin: 3rem auto 4rem;
             padding: 0 1.5rem;
             text-align: center;
         }
 
         .about-section h2 {
-            font-weight: 400;
-            font-size: 1.8rem;
+            font-weight: 300;
+            font-size: 2.2rem;
             margin-bottom: 1rem;
             color: var(--text-main);
         }
@@ -98,6 +87,7 @@
         .about-section p {
             color: var(--text-muted);
             font-size: 1rem;
+            font-weight: 300;
         }
 
         /* Filter Buttons */
@@ -114,7 +104,10 @@
             padding: 0.5rem 1.2rem;
             margin: 0 0.2rem;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             transition: all 0.3s ease;
             border-radius: 4px;
         }
@@ -136,45 +129,54 @@
             padding: 0 2rem 4rem;
         }
 
-        /* CSS Columns for Waterfall/Masonry effect */
         .gallery {
             column-count: 3;
             column-gap: 1.5rem;
         }
 
+        /* Gallery Item & Scroll Animation Base State */
         .gallery-item {
-            break-inside: avoid; /* Prevents images from being cut in half */
+            break-inside: avoid;
             margin-bottom: 1.5rem;
             position: relative;
             cursor: pointer;
             border-radius: 4px;
             overflow: hidden;
             background: var(--card-bg);
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            
+            /* Animation Start Properties */
+            opacity: 0; 
+            transform: translateY(40px);
+            transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        /* "Show Full Picture" fixes */
-        .gallery-item img {
-            width: 100%;
-            height: auto; /* Maintains natural aspect ratio */
-            display: block;
-            transition: transform 0.5s ease;
-        }
-
-        .gallery-item:hover img {
-            transform: scale(1.03); /* Subtle zoom */
+        /* State when element is visible on screen */
+        .gallery-item.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .gallery-item.hidden {
-            display: none; /* simple display toggle for filtering */
+            display: none;
         }
 
-        /* Animation class for filtering */
-        .gallery-item.fade-in {
-            animation: fadeIn 0.5s ease forwards;
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.7s ease, opacity 0.5s ease;
+            opacity: 0; /* Starts hidden for lazy load fade-in */
         }
 
-        /* Lightbox - Smoother & Darker */
+        .gallery-item img.is-loaded {
+            opacity: 1;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.03);
+        }
+
+        /* Lightbox */
         .lightbox {
             display: none;
             position: fixed;
@@ -182,9 +184,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(20, 20, 20, 0.95);
+            background: rgba(20, 20, 20, 0.98);
             z-index: 1000;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px);
             opacity: 0;
             transition: opacity 0.3s ease;
         }
@@ -206,18 +208,17 @@
             max-width: 100%;
             max-height: 90vh;
             object-fit: contain;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            /* Simple fade transition for images */
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
             transition: opacity 0.3s ease; 
             opacity: 1;
+            user-select: none; /* Prevents highlighting during swipe */
         }
         
-        /* Helper to fade image out during switch */
         .lightbox-content img.fade-out {
             opacity: 0.5;
         }
 
-        /* Controls */
+        /* Lightbox Controls */
         .close-btn, .nav-btn {
             position: absolute;
             background: transparent;
@@ -246,26 +247,30 @@
             font-size: 0.85rem;
             border-top: 1px solid #444;
             margin-top: 2rem;
+            font-family: 'Montserrat', sans-serif;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Responsive Columns */
+        /* Responsive */
         @media (max-width: 900px) {
             .gallery { column-count: 2; }
         }
         @media (max-width: 600px) {
             .gallery { column-count: 1; }
-            .filter-btn { margin-bottom: 0.5rem; }
-            .prev-btn { left: 0.5rem; }
-            .next-btn { right: 0.5rem; }
+            .prev-btn, .next-btn { display: none; } /* Hide arrows on mobile, rely on swipe */
+            .about-section h2 { font-size: 1.8rem; }
         }
     </style>
 </head>
 <body>
+
+    <nav>
+        <ul>
+            <li><a href="#" onclick="return false;">About</a></li>
+            <li><a href="#" onclick="return false;">Work</a></li>
+            <li><a href="#" onclick="return false;">Contact</a></li>
+        </ul>
+    </nav>
+
     <section class="about-section">
         <h2>Risible Alias</h2>
         <p>I'm primarily interested in photographic composition. <br>Please find a small selection of my work below.</p>
@@ -279,170 +284,97 @@
         <button class="filter-btn" onclick="filterGallery('nature', this)">Nature</button>
     </div>
 
-<div class="gallery-container">
+    <div class="gallery-container">
         <div class="gallery" id="gallery-grid">
             
             <div class="gallery-item" data-category="nature">
-                <img src="images/monke.jpeg" 
-                     alt="Portrait of a Monkey"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/monke.jpeg" alt="Portrait of a Monkey" loading="lazy" decoding="async">
             </div>
 
             <div class="gallery-item" data-category="landscape">
-                <img src="images/rice_paddy.jpeg" 
-                     alt="Rice paddy field at midday"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/rice_paddy.jpeg" alt="Rice paddy field at midday" loading="lazy" decoding="async">
             </div>
             
             <div class="gallery-item" data-category="abstract">
-                <img src="images/diffraction.jpeg" 
-                     alt="diffraction"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/diffraction.jpeg" alt="Diffraction" loading="lazy" decoding="async">
             </div>
 
             <div class="gallery-item" data-category="abstract">
-                <img src="images/door.jpeg" 
-                     alt="door"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/door.jpeg" alt="Door" loading="lazy" decoding="async">
             </div>
             
             <div class="gallery-item" data-category="nature">
-                <img src="images/twomonkeys.jpeg" 
-                     alt="Two monkeys resting"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/twomonkeys.jpeg" alt="Two monkeys resting" loading="lazy" decoding="async">
             </div>
 
             <div class="gallery-item" data-category="abstract">
-                <img src="images/tiles.jpeg" 
-                     alt="tiles"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/tiles.jpeg" alt="Tiles" loading="lazy" decoding="async">
             </div>
           
             <div class="gallery-item" data-category="landscape abstract">
-                <img src="images/beach_layers.jpeg" 
-                     alt="Layers of colour on the beach at sunrise"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/beach_layers.jpeg" alt="Layers of colour on the beach at sunrise" loading="lazy" decoding="async">
             </div>
           
             <div class="gallery-item" data-category="landscape">
-                <img src="images/boat_launch.jpeg" 
-                     alt="Fishermen try to launch their boat, through the waves"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/boat_launch.jpeg" alt="Fishermen try to launch their boat" loading="lazy" decoding="async">
             </div>
           
             <div class="gallery-item" data-category="landscape">
-                <img src="images/boat_sunrise.jpeg" 
-                     alt="A boat, waiting to return to sea"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/boat_sunrise.jpeg" alt="A boat, waiting to return to sea" loading="lazy" decoding="async">
             </div>
 
             <div class="gallery-item" data-category="abstract">
-                <img src="images/led.jpeg" 
-                     alt="led"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/led.jpeg" alt="LED" loading="lazy" decoding="async">
             </div>
 
             <div class="gallery-item" data-category="landscape">
-                <img src="images/pink_lakehouses.jpeg" 
-                     alt="Colourful buildings near water"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/pink_lakehouses.jpeg" alt="Colourful buildings near water" loading="lazy" decoding="async">
             </div>
 
             <div class="gallery-item" data-category="abstract">
-                <img src="images/to.jpeg" 
-                     alt="to"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/to.jpeg" alt="To" loading="lazy" decoding="async">
             </div>
             
             <div class="gallery-item" data-category="nature">
-                <img src="images/cat.jpeg" 
-                     alt="A wild cat plays on a tree near a temple"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/cat.jpeg" alt="A wild cat plays on a tree" loading="lazy" decoding="async">
             </div>
           
             <div class="gallery-item" data-category="landscape nature">
-                <img src="images/dogs_landing_boat.jpeg" 
-                     alt="Three dogs, and fisherman landing"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/dogs_landing_boat.jpeg" alt="Three dogs, and fisherman landing" loading="lazy" decoding="async">
             </div>
 
             <div class="gallery-item" data-category="abstract">
-                <img src="images/rug.jpeg" 
-                     alt="rug"
-                     loading="lazy"
-                     decoding="async">
-            </div>
-            
-            <div class="gallery-item" data-category="abstract">
-                <img src="images/diffraction.jpeg" 
-                     alt="diffraction"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/rug.jpeg" alt="Rug" loading="lazy" decoding="async">
             </div>
             
             <div class="gallery-item" data-category="nature">
-                <img src="images/green_bee_eater.jpeg" 
-                     alt="A Green Bee-Eater"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/green_bee_eater.jpeg" alt="A Green Bee-Eater" loading="lazy" decoding="async">
             </div>
 
             <div class="gallery-item" data-category="nature">
-                <img src="images/hawk_eagle.jpeg" 
-                     alt="A Hawk-Eagle watches from a tree"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/hawk_eagle.jpeg" alt="A Hawk-Eagle watches from a tree" loading="lazy" decoding="async">
             </div>
 
             <div class="gallery-item" data-category="landscape">
-                <img src="images/hill_sunset.jpeg" 
-                     alt="Anti-crepuscular rays at sunset, across a reservoir"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/hill_sunset.jpeg" alt="Anti-crepuscular rays at sunset" loading="lazy" decoding="async">
             </div>
 
             <div class="gallery-item" data-category="landscape">
-                <img src="images/palms_ocean.jpeg" 
-                     alt="Near the ocean, palms"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/palms_ocean.jpeg" alt="Near the ocean, palms" loading="lazy" decoding="async">
             </div>
 
             <div class="gallery-item" data-category="landscape">
-                <img src="images/stilt_hut.jpeg" 
-                     alt="Stilt-huts"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/stilt_hut.jpeg" alt="Stilt-huts" loading="lazy" decoding="async">
             </div>
 
             <div class="gallery-item" data-category="abstract">
-                <img src="images/table1.jpeg" 
-                     alt="table1"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/table1.jpeg" alt="Table" loading="lazy" decoding="async">
             </div>
 
             <div class="gallery-item" data-category="nature landscape">
-                <img src="images/sunrise_dogs.jpeg" 
-                     alt="Three dogs play as the sun rises"
-                     loading="lazy"
-                     decoding="async">
+                <img src="images/sunrise_dogs.jpeg" alt="Three dogs play as the sun rises" loading="lazy" decoding="async">
             </div>
-            </div>
+        </div>
     </div>
 
     <div class="lightbox" id="lightbox">
@@ -460,145 +392,159 @@
     </footer>
 
     <script>
-        // --- State Management ---
-        let currentImageIndex = 0;
-        let visibleImages = []; // This array will only hold images currently shown by the filter
+        // --- 1. Image Loading Check ---
+        // This fixes the "script inside style" error you had previously
+        document.querySelectorAll('.gallery-item img').forEach(img => {
+            if (img.complete) {
+                img.classList.add('is-loaded');
+            } else {
+                img.addEventListener('load', () => {
+                    img.classList.add('is-loaded');
+                }, { once: true });
+            }
+            // Error logger
+            img.onerror = function() {
+                console.error("Image failed: " + this.src);
+            };
+        });
 
-        // --- Elements ---
+        // --- 2. Scroll Reveal Animation (Intersection Observer) ---
+        const observerOptions = {
+            threshold: 0.1, // Trigger when 10% is visible
+            rootMargin: "0px 0px -50px 0px" // Slight offset for better feel
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); // Only animate once
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            observer.observe(item);
+        });
+
+        // --- 3. Gallery Filtering & Logic ---
+        let currentImageIndex = 0;
+        let visibleImages = []; 
+
         const galleryGrid = document.getElementById('gallery-grid');
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
 
-        // --- Initialization ---
-        // Run once on load to index all images
+        // Initialize
         updateVisibleList();
 
-                // --- Updated Filter Function for Multiple Categories ---
         function filterGallery(category, btnElement) {
-            // 1. Update UI Buttons
+            // Update Buttons
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
         
-            // 2. Filter Images using .includes()
+            // Filter Images
             const allItems = document.querySelectorAll('.gallery-item');
             
             allItems.forEach(item => {
-                // We convert to lowercase to ensure the search isn't picky about casing
                 const itemCategories = item.getAttribute('data-category').toLowerCase();
                 const searchCategory = category.toLowerCase();
                 
-                // This is the magic line: it checks if the button category exists 
-                // anywhere inside the data-category string.
                 if (searchCategory === 'all' || itemCategories.includes(searchCategory)) {
                     item.classList.remove('hidden');
-                    // Adding a slight delay to the fade-in makes the transition feel "organic"
-                    setTimeout(() => item.classList.add('fade-in'), 10);
+                    // Reset animation state for re-filtering
+                    item.classList.remove('visible'); 
+                    setTimeout(() => item.classList.add('visible'), 50);
                 } else {
                     item.classList.add('hidden');
-                    item.classList.remove('fade-in');
                 }
             });
         
-            // 3. Refresh the lightbox list so the arrows work correctly
             updateVisibleList();
         }
-        
-        // --- Troubleshooting Helper ---
-        // This will alert you in the browser console (F12) if an image path is wrong
-        document.querySelectorAll('.gallery-item img').forEach(img => {
-            img.onerror = function() {
-                console.error("Image failed to load: " + this.src + ". Check your file extension and folder name!");
-            };
-        });
 
-        // --- Helper: Update the list of currently visible images ---
         function updateVisibleList() {
-            // Select only items that do NOT have the 'hidden' class
             const items = document.querySelectorAll('.gallery-item:not(.hidden)');
             visibleImages = Array.from(items);
         }
 
-        // --- Lightbox Opening Logic ---
-        // We use "Event Delegation": we listen for clicks on the grid, 
-        // then check if a gallery-item was clicked.
+        // --- 4. Lightbox Logic ---
         galleryGrid.addEventListener('click', (e) => {
             const clickedItem = e.target.closest('.gallery-item');
             if (!clickedItem) return;
 
-            // Find exactly which index this item has within our VISIBLE list
-            // This fixes the bug where clicking an image opened the wrong one after filtering
             const index = visibleImages.indexOf(clickedItem);
-            
-            if (index > -1) {
-                openLightbox(index);
-            }
+            if (index > -1) openLightbox(index);
         });
 
         function openLightbox(index) {
             currentImageIndex = index;
             const imgSrc = visibleImages[currentImageIndex].querySelector('img').src;
-            
             lightboxImg.src = imgSrc;
             lightbox.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Stop background scrolling
+            document.body.style.overflow = 'hidden';
         }
 
-        // --- Lightbox Navigation ---
         function changeImage(direction) {
-            // Fade out slightly for smooth transition
             lightboxImg.classList.add('fade-out');
-
             setTimeout(() => {
-                // Calculate new index
                 currentImageIndex += direction;
+                // Loop
+                if (currentImageIndex >= visibleImages.length) currentImageIndex = 0;
+                else if (currentImageIndex < 0) currentImageIndex = visibleImages.length - 1;
 
-                // Loop around if we reach the end or start
-                if (currentImageIndex >= visibleImages.length) {
-                    currentImageIndex = 0;
-                } else if (currentImageIndex < 0) {
-                    currentImageIndex = visibleImages.length - 1;
-                }
-
-                // Update Image
                 lightboxImg.src = visibleImages[currentImageIndex].querySelector('img').src;
-                
-                // Fade back in
                 lightboxImg.classList.remove('fade-out');
-            }, 200); // 200ms matches the transition speed
+            }, 200);
         }
 
-        // --- Event Listeners for Controls ---
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Event Listeners (Clicks & Keys)
         document.getElementById('close-lightbox').addEventListener('click', closeLightbox);
+        document.getElementById('next-btn').addEventListener('click', (e) => { e.stopPropagation(); changeImage(1); });
+        document.getElementById('prev-btn').addEventListener('click', (e) => { e.stopPropagation(); changeImage(-1); });
         
-        document.getElementById('next-btn').addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent closing when clicking button
-            changeImage(1);
-        });
-
-        document.getElementById('prev-btn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            changeImage(-1);
-        });
-
-        // Close when clicking the dark background
         lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox) {
-                closeLightbox();
-            }
+            if (e.target === lightbox) closeLightbox();
         });
 
-        // Keyboard support
         document.addEventListener('keydown', (e) => {
             if (!lightbox.classList.contains('active')) return;
-            
             if (e.key === 'Escape') closeLightbox();
             if (e.key === 'ArrowRight') changeImage(1);
             if (e.key === 'ArrowLeft') changeImage(-1);
         });
 
-        function closeLightbox() {
-            lightbox.classList.remove('active');
-            document.body.style.overflow = 'auto'; // Restore scrolling
+        // --- 5. Mobile Swipe Gestures ---
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const minSwipeDistance = 50; // Minimum px to register as swipe
+
+        lightbox.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, {passive: true});
+
+        lightbox.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, {passive: true});
+
+        function handleSwipe() {
+            const distance = touchEndX - touchStartX;
+            
+            if (Math.abs(distance) > minSwipeDistance) {
+                if (distance < 0) {
+                    // Swipe Left -> Next Image
+                    changeImage(1);
+                } else {
+                    // Swipe Right -> Prev Image
+                    changeImage(-1);
+                }
+            }
         }
     </script>
 </body>
