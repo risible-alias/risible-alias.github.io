@@ -69,26 +69,6 @@
             color: var(--accent);
         }
 
-        /* About Section */
-        .about-section {
-            max-width: 600px;
-            margin: 3rem auto 4rem;
-            padding: 0 1.5rem;
-            text-align: center;
-        }
-
-        .about-section h2 {
-            font-weight: 300;
-            font-size: 2.2rem;
-            margin-bottom: 1rem;
-            color: var(--text-main);
-        }
-
-        .about-section p {
-            color: var(--text-muted);
-            font-size: 1rem;
-            font-weight: 300;
-        }
 
         /* Filter Buttons */
         .filter-container {
@@ -263,19 +243,6 @@
 </head>
 <body>
 
-    <nav>
-        <ul>
-            <li><a href="#" onclick="return false;">About</a></li>
-            <li><a href="#" onclick="return false;">Work</a></li>
-            <li><a href="#" onclick="return false;">Contact</a></li>
-        </ul>
-    </nav>
-
-    <section class="about-section">
-        <h2>Risible Alias</h2>
-        <p>I'm primarily interested in photographic composition. <br>Please find a small selection of my work below.</p>
-    </section>
-
     <div class="filter-container">
         <button class="filter-btn active" onclick="filterGallery('all', this)">All</button>
         <button class="filter-btn" onclick="filterGallery('landscape', this)">Landscape</button>
@@ -392,8 +359,6 @@
     </footer>
 
     <script>
-        // --- 1. Image Loading Check ---
-        // This fixes the "script inside style" error you had previously
         document.querySelectorAll('.gallery-item img').forEach(img => {
             if (img.complete) {
                 img.classList.add('is-loaded');
