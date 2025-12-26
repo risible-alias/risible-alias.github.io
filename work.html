@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risible Alias</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Neutral Middle-Gray Palette */
+            --bg-color: #333333;
+            --card-bg: #3d3d3d;
+            --text-main: #e0e0e0;
+            --text-muted: #a0a0a0;
+            
+            /* Dark Green Highlights */
+            --accent: #5e8c61; 
+            --accent-hover: #76a879;
+            --accent-glow: rgba(94, 140, 97, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Typography Overrides */
+        h1, h2, h3 {
+            font-family: 'Cormorant Garamond', serif;
+            letter-spacing: 0.05em;
+        }
+
+        /* Minimal Navigation */
+        nav {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        /* About Section */
+        .about-section {
+            max-width: 600px;
+            margin: 3rem auto 4rem;
+            padding: 0 1.5rem;
+            text-align: center;
+        }
+
+        .about-section h2 {
+            font-weight: 300;
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+        }
+
+        .about-section p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 300;
+        }
+
+        /* Filter Buttons */
+        .filter-container {
+            margin-bottom: 3rem;
+            text-align: center;
+            padding: 0 1rem;
+        }
+
+        .filter-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid transparent;
+            padding: 0.5rem 1.2rem;
+            margin: 0 0.2rem;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .filter-btn:hover {
+            color: var(--accent-hover);
+        }
+
+        .filter-btn.active {
+            color: var(--accent);
+            border-color: var(--accent);
+            background: rgba(94, 140, 97, 0.05);
+        }
+
+        /* Masonry Gallery Layout */
+        .gallery-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .gallery {
+            column-count: 3;
+            column-gap: 1.5rem;
+        }
+
+        /* Gallery Item & Scroll Animation Base State */
+        .gallery-item {
+            break-inside: avoid;
+            margin-bottom: 1.5rem;
+            position: relative;
+            cursor: pointer;
+            border-radius: 4px;
+            overflow: hidden;
+            background: var(--card-bg);
+            
+            /* Animation Start Properties */
+            opacity: 0; 
+            transform: translateY(40px);
+            transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* State when element is visible on screen */
+        .gallery-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gallery-item.hidden {
+            display: none;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.7s ease, opacity 0.5s ease;
+            opacity: 0; /* Starts hidden for lazy load fade-in */
+        }
+
+        .gallery-item img.is-loaded {
+            opacity: 1;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.03);
+        }
+
+        /* Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(20, 20, 20, 0.98);
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .lightbox.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+
+        .lightbox-content {
+            max-width: 90vw;
+            max-height: 90vh;
+            position: relative;
+        }
+
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            transition: opacity 0.3s ease; 
+            opacity: 1;
+            user-select: none; /* Prevents highlighting during swipe */
+        }
+        
+        .lightbox-content img.fade-out {
+            opacity: 0.5;
+        }
+
+        /* Lightbox Controls */
+        .close-btn, .nav-btn {
+            position: absolute;
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            cursor: pointer;
+            font-size: 2rem;
+            transition: color 0.2s;
+            padding: 1rem;
+            z-index: 1001;
+        }
+
+        .close-btn:hover, .nav-btn:hover {
+            color: var(--accent);
+        }
+
+        .close-btn { top: 1rem; right: 2rem; font-size: 3rem; line-height: 0.5; }
+        .prev-btn { left: 2rem; top: 50%; transform: translateY(-50%); }
+        .next-btn { right: 2rem; top: 50%; transform: translateY(-50%); }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            font-size: 0.85rem;
+            border-top: 1px solid #444;
+            margin-top: 2rem;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .gallery { column-count: 2; }
+        }
+        @media (max-width: 600px) {
+            .gallery { column-count: 1; }
+            .prev-btn, .next-btn { display: none; } /* Hide arrows on mobile, rely on swipe */
+            .about-section h2 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li><a href="#" onclick="return false;">About</a></li>
+            <li><a href="#" onclick="return false;">Work</a></li>
+            <li><a href="#" onclick="return false;">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section class="about-section">
+        <h2>Risible Alias</h2>
+        <p>I'm primarily interested in photographic composition. <br>Please find a small selection of my work below.</p>
+    </section>
+
+    <div class="filter-container">
+        <button class="filter-btn active" onclick="filterGallery('all', this)">All</button>
+        <button class="filter-btn" onclick="filterGallery('landscape', this)">Landscape</button>
+        <button class="filter-btn" onclick="filterGallery('abstract', this)">Abstract</button>
+        <button class="filter-btn" onclick="filterGallery('street', this)">Street</button>
+        <button class="filter-btn" onclick="filterGallery('nature', this)">Nature</button>
+    </div>
+
+    <div class="gallery-container">
+        <div class="gallery" id="gallery-grid">
+            
+            <div class="gallery-item" data-category="nature">
+                <img src="images/monke.jpeg" alt="Portrait of a Monkey" loading="lazy" decoding="async">
+            </div>
+
+            <div class="gallery-item" data-category="landscape">
+                <img src="images/rice_paddy.jpeg" alt="Rice paddy field at midday" loading="lazy" decoding="async">
+            </div>
+            
+            <div class="gallery-item" data-category="abstract">
+                <img src="images/diffraction.jpeg" alt="Diffraction" loading="lazy" decoding="async">
+            </div>
+
+            <div class="gallery-item" data-category="abstract">
+                <img src="images/door.jpeg" alt="Door" loading="lazy" decoding="async">
+            </div>
+            
+            <div class="gallery-item" data-category="nature">
+                <img src="images/twomonkeys.jpeg" alt="Two monkeys resting" loading="lazy" decoding="async">
+            </div>
+
+            <div class="gallery-item" data-category="abstract">
+                <img src="images/tiles.jpeg" alt="Tiles" loading="lazy" decoding="async">
+            </div>
+          
+            <div class="gallery-item" data-category="landscape abstract">
+                <img src="images/beach_layers.jpeg" alt="Layers of colour on the beach at sunrise" loading="lazy" decoding="async">
+            </div>
+          
+            <div class="gallery-item" data-category="landscape">
+                <img src="images/boat_launch.jpeg" alt="Fishermen try to launch their boat" loading="lazy" decoding="async">
+            </div>
+          
+            <div class="gallery-item" data-category="landscape">
+                <img src="images/boat_sunrise.jpeg" alt="A boat, waiting to return to sea" loading="lazy" decoding="async">
+            </div>
+
+            <div class="gallery-item" data-category="abstract">
+                <img src="images/led.jpeg" alt="LED" loading="lazy" decoding="async">
+            </div>
+
+            <div class="gallery-item" data-category="landscape">
+                <img src="images/pink_lakehouses.jpeg" alt="Colourful buildings near water" loading="lazy" decoding="async">
+            </div>
+
+            <div class="gallery-item" data-category="abstract">
+                <img src="images/to.jpeg" alt="To" loading="lazy" decoding="async">
+            </div>
+            
+            <div class="gallery-item" data-category="nature">
+                <img src="images/cat.jpeg" alt="A wild cat plays on a tree" loading="lazy" decoding="async">
+            </div>
+          
+            <div class="gallery-item" data-category="landscape nature">
+                <img src="images/dogs_landing_boat.jpeg" alt="Three dogs, and fisherman landing" loading="lazy" decoding="async">
+            </div>
+
+            <div class="gallery-item" data-category="abstract">
+                <img src="images/rug.jpeg" alt="Rug" loading="lazy" decoding="async">
+            </div>
+            
+            <div class="gallery-item" data-category="nature">
+                <img src="images/green_bee_eater.jpeg" alt="A Green Bee-Eater" loading="lazy" decoding="async">
+            </div>
+
+            <div class="gallery-item" data-category="nature">
+                <img src="images/hawk_eagle.jpeg" alt="A Hawk-Eagle watches from a tree" loading="lazy" decoding="async">
+            </div>
+
+            <div class="gallery-item" data-category="landscape">
+                <img src="images/hill_sunset.jpeg" alt="Anti-crepuscular rays at sunset" loading="lazy" decoding="async">
+            </div>
+
+            <div class="gallery-item" data-category="landscape">
+                <img src="images/palms_ocean.jpeg" alt="Near the ocean, palms" loading="lazy" decoding="async">
+            </div>
+
+            <div class="gallery-item" data-category="landscape">
+                <img src="images/stilt_hut.jpeg" alt="Stilt-huts" loading="lazy" decoding="async">
+            </div>
+
+            <div class="gallery-item" data-category="abstract">
+                <img src="images/table1.jpeg" alt="Table" loading="lazy" decoding="async">
+            </div>
+
+            <div class="gallery-item" data-category="nature landscape">
+                <img src="images/sunrise_dogs.jpeg" alt="Three dogs play as the sun rises" loading="lazy" decoding="async">
+            </div>
+        </div>
+    </div>
+
+    <div class="lightbox" id="lightbox">
+        <button class="close-btn" id="close-lightbox">&times;</button>
+        <button class="nav-btn prev-btn" id="prev-btn">&#8249;</button>
+        <button class="nav-btn next-btn" id="next-btn">&#8250;</button>
+        
+        <div class="lightbox-content">
+            <img id="lightbox-img" src="" alt="Full screen view">
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Risible Alias</p>
+    </footer>
+
+    <script>
+        // --- 1. Image Loading Check ---
+        // This fixes the "script inside style" error you had previously
+        document.querySelectorAll('.gallery-item img').forEach(img => {
+            if (img.complete) {
+                img.classList.add('is-loaded');
+            } else {
+                img.addEventListener('load', () => {
+                    img.classList.add('is-loaded');
+                }, { once: true });
+            }
+            // Error logger
+            img.onerror = function() {
+                console.error("Image failed: " + this.src);
+            };
+        });
+
+        // --- 2. Scroll Reveal Animation (Intersection Observer) ---
+        const observerOptions = {
+            threshold: 0.1, // Trigger when 10% is visible
+            rootMargin: "0px 0px -50px 0px" // Slight offset for better feel
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); // Only animate once
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            observer.observe(item);
+        });
+
+        // --- 3. Gallery Filtering & Logic ---
+        let currentImageIndex = 0;
+        let visibleImages = []; 
+
+        const galleryGrid = document.getElementById('gallery-grid');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+
+        // Initialize
+        updateVisibleList();
+
+        function filterGallery(category, btnElement) {
+            // Update Buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+        
+            // Filter Images
+            const allItems = document.querySelectorAll('.gallery-item');
+            
+            allItems.forEach(item => {
+                const itemCategories = item.getAttribute('data-category').toLowerCase();
+                const searchCategory = category.toLowerCase();
+                
+                if (searchCategory === 'all' || itemCategories.includes(searchCategory)) {
+                    item.classList.remove('hidden');
+                    // Reset animation state for re-filtering
+                    item.classList.remove('visible'); 
+                    setTimeout(() => item.classList.add('visible'), 50);
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        
+            updateVisibleList();
+        }
+
+        function updateVisibleList() {
+            const items = document.querySelectorAll('.gallery-item:not(.hidden)');
+            visibleImages = Array.from(items);
+        }
+
+        // --- 4. Lightbox Logic ---
+        galleryGrid.addEventListener('click', (e) => {
+            const clickedItem = e.target.closest('.gallery-item');
+            if (!clickedItem) return;
+
+            const index = visibleImages.indexOf(clickedItem);
+            if (index > -1) openLightbox(index);
+        });
+
+        function openLightbox(index) {
+            currentImageIndex = index;
+            const imgSrc = visibleImages[currentImageIndex].querySelector('img').src;
+            lightboxImg.src = imgSrc;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function changeImage(direction) {
+            lightboxImg.classList.add('fade-out');
+            setTimeout(() => {
+                currentImageIndex += direction;
+                // Loop
+                if (currentImageIndex >= visibleImages.length) currentImageIndex = 0;
+                else if (currentImageIndex < 0) currentImageIndex = visibleImages.length - 1;
+
+                lightboxImg.src = visibleImages[currentImageIndex].querySelector('img').src;
+                lightboxImg.classList.remove('fade-out');
+            }, 200);
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Event Listeners (Clicks & Keys)
+        document.getElementById('close-lightbox').addEventListener('click', closeLightbox);
+        document.getElementById('next-btn').addEventListener('click', (e) => { e.stopPropagation(); changeImage(1); });
+        document.getElementById('prev-btn').addEventListener('click', (e) => { e.stopPropagation(); changeImage(-1); });
+        
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowRight') changeImage(1);
+            if (e.key === 'ArrowLeft') changeImage(-1);
+        });
+
+        // --- 5. Mobile Swipe Gestures ---
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const minSwipeDistance = 50; // Minimum px to register as swipe
+
+        lightbox.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, {passive: true});
+
+        lightbox.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, {passive: true});
+
+        function handleSwipe() {
+            const distance = touchEndX - touchStartX;
+            
+            if (Math.abs(distance) > minSwipeDistance) {
+                if (distance < 0) {
+                    // Swipe Left -> Next Image
+                    changeImage(1);
+                } else {
+                    // Swipe Right -> Prev Image
+                    changeImage(-1);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
