@@ -281,7 +281,7 @@
                 <img src="images/twomonkeys.jpeg" alt="Two monkeys resting">
             </div>
           
-            <div class="gallery-item" data-category="landscape">
+            <div class="gallery-item" data-category="landscape abstract">
                 <img src="images/beach_layers.jpeg" alt="Layers of colour on the beach at sunrise">
             </div>
           
@@ -290,14 +290,14 @@
             </div>
           
             <div class="gallery-item" data-category="landscape">
-                <img src="images/boat_sunrise" alt="A boat, waiting to return to sea">
+                <img src="images/boat_sunrise.jpeg" alt="A boat, waiting to return to sea">
             </div>
           
             <div class="gallery-item" data-category="nature">
                 <img src="images/cat.jpeg" alt="A wild cat plays on a tree near a temple">
             </div>
           
-            <div class="gallery-item" data-category="landscape">
+            <div class="gallery-item" data-category="landscape nature">
                 <img src="images/dogs_landing_boat.jpeg" alt="Three dogs, and fisherman landing">
             </div>
 
@@ -317,10 +317,6 @@
                 <img src="images/hill_sunset.jpeg" alt="Anti-crepuscular rays at sunset, across a reservoir">
             </div>
 
-            <div class="gallery-item" data-category="nature">
-                <img src="images/monke.jpeg" alt="A Monkey">
-            </div>
-
             <div class="gallery-item" data-category="landscape">
                 <img src="images/palms_ocean.jpeg" alt="Near the ocean, palms">
             </div>
@@ -329,7 +325,7 @@
                 <img src="images/stilt_hut.jpeg" alt="Stilt-huts">
             </div>
 
-            <div class="gallery-item" data-category="nature">
+            <div class="gallery-item" data-category="nature landscape">
                 <img src="images/sunrise_dogs.jpeg" alt="Three dogs play as the sun rises">
             </div>
             </div>
@@ -363,31 +359,43 @@
         // Run once on load to index all images
         updateVisibleList();
 
-        // --- Filter Function ---
+                // --- Updated Filter Function for Multiple Categories ---
         function filterGallery(category, btnElement) {
-            // 1. Update Buttons
+            // 1. Update UI Buttons
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
-
-            // 2. Filter Images
+        
+            // 2. Filter Images using .includes()
             const allItems = document.querySelectorAll('.gallery-item');
             
             allItems.forEach(item => {
-                const itemCategory = item.getAttribute('data-category');
+                // We convert to lowercase to ensure the search isn't picky about casing
+                const itemCategories = item.getAttribute('data-category').toLowerCase();
+                const searchCategory = category.toLowerCase();
                 
-                // If 'all' or matches category, show it. Otherwise hide it.
-                if (category === 'all' || itemCategory === category) {
+                // This is the magic line: it checks if the button category exists 
+                // anywhere inside the data-category string.
+                if (searchCategory === 'all' || itemCategories.includes(searchCategory)) {
                     item.classList.remove('hidden');
-                    item.classList.add('fade-in'); // Trigger animation
+                    // Adding a slight delay to the fade-in makes the transition feel "organic"
+                    setTimeout(() => item.classList.add('fade-in'), 10);
                 } else {
                     item.classList.add('hidden');
                     item.classList.remove('fade-in');
                 }
             });
-
-            // 3. Update our internal list of what's currently visible
+        
+            // 3. Refresh the lightbox list so the arrows work correctly
             updateVisibleList();
         }
+        
+        // --- Troubleshooting Helper ---
+        // This will alert you in the browser console (F12) if an image path is wrong
+        document.querySelectorAll('.gallery-item img').forEach(img => {
+            img.onerror = function() {
+                console.error("Image failed to load: " + this.src + ". Check your file extension and folder name!");
+            };
+        });
 
         // --- Helper: Update the list of currently visible images ---
         function updateVisibleList() {
