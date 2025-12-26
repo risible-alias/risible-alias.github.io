@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Risible Alias</title>
     <style>
+        .gallery-item img {
+          opacity: 0;
+          transition: opacity 0.45s ease;
+        }
+        
+        /* When loaded */
+        .gallery-item img.is-loaded {
+          opacity: 1;
+        }
+
         :root {
             /* Neutral Middle-Gray Palette */
             --bg-color: #333333;
@@ -23,6 +33,18 @@
             padding: 0;
             box-sizing: border-box;
         }
+        <script>
+          document.querySelectorAll('.gallery-item img').forEach(img => {
+            if (img.complete) {
+              // Image was already cached
+              img.classList.add('is-loaded');
+            } else {
+              img.addEventListener('load', () => {
+                img.classList.add('is-loaded');
+              }, { once: true });
+            }
+          });
+        </script>
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
