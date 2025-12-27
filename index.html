@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lorem Ipsum — Photography</title>
+  <title>Risible Alias — Photography</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -118,21 +118,94 @@
       text-align: center;
     }
 
-    .menu-nav li {
+    .menu-nav > li {
       margin: 2rem 0;
       opacity: 0;
       transform: translateY(20px);
       transition: all 0.4s ease;
+      position: relative;
     }
 
-    .menu-overlay.open .menu-nav li {
+    .menu-overlay.open .menu-nav > li {
       opacity: 1;
       transform: translateY(0);
     }
 
-    .menu-overlay.open .menu-nav li:nth-child(1) { transition-delay: 0.1s; }
-    .menu-overlay.open .menu-nav li:nth-child(2) { transition-delay: 0.2s; }
-    .menu-overlay.open .menu-nav li:nth-child(3) { transition-delay: 0.3s; }
+    .menu-overlay.open .menu-nav > li:nth-child(1) { transition-delay: 0.1s; }
+    .menu-overlay.open .menu-nav > li:nth-child(2) { transition-delay: 0.2s; }
+    .menu-overlay.open .menu-nav > li:nth-child(3) { transition-delay: 0.3s; }
+
+    /* Gallery parent item */
+    .gallery-parent {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4rem;
+    }
+
+    /* Submenu styles - positioned to the right */
+    .submenu {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      position: relative;
+    }
+
+    .submenu li {
+      position: relative;
+    }
+
+    .submenu a {
+      font-size: 1.5rem;
+      color: var(--muted);
+      font-weight: 300;
+      position: relative;
+      padding-left: 3rem;
+    }
+
+    .submenu a:hover {
+      color: var(--accent);
+    }
+
+    /* Curved connecting lines */
+    .submenu li::before {
+      content: '';
+      position: absolute;
+      left: -2rem;
+      top: 50%;
+      width: 2.5rem;
+      height: 2px;
+      background: var(--muted);
+      opacity: 0.4;
+    }
+
+    /* Vertical line connecting all branches */
+    .submenu::before {
+      content: '';
+      position: absolute;
+      left: -2rem;
+      top: 0.75rem;
+      bottom: 0.75rem;
+      width: 2px;
+      background: var(--muted);
+      opacity: 0.4;
+      border-radius: 2px;
+    }
+
+    /* Main connector from Gallery to the vertical line */
+    .submenu::after {
+      content: '';
+      position: absolute;
+      left: -4rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 2rem;
+      height: 2px;
+      background: var(--muted);
+      opacity: 0.4;
+    }
 
     .menu-nav a {
       font-size: 2.5rem;
@@ -472,11 +545,23 @@
     @media (max-width: 900px) {
       .gallery { column-count: 2; }
       .menu-nav a { font-size: 2rem; }
+      .submenu a { font-size: 1.2rem; }
     }
 
     @media (max-width: 600px) {
       .gallery { column-count: 1; }
       .menu-nav a { font-size: 1.5rem; }
+      .submenu a { font-size: 1rem; }
+      .gallery-parent { 
+        gap: 2rem; 
+        flex-direction: column;
+      }
+      .submenu::after {
+        display: none;
+      }
+      .submenu {
+        margin-top: 1rem;
+      }
       .prev-btn, .next-btn { display: none; }
       .hero-content h1 { font-size: 1.8rem; }
       .menu-toggle { top: 1.5rem; left: 1.5rem; }
@@ -497,23 +582,32 @@
   <div class="menu-overlay" id="menu-overlay">
     <ul class="menu-nav">
       <li><a href="#home" class="menu-link">Home</a></li>
-      <li><a href="#gallery" class="menu-link">Gallery</a></li>
+      <li>
+        <div class="gallery-parent">
+          <a href="#gallery" class="menu-link filter-link" data-filter="all">Gallery (All)</a>
+          <ul class="submenu">
+            <li><a href="#gallery" class="menu-link filter-link" data-filter="landscape">Landscape</a></li>
+            <li><a href="#gallery" class="menu-link filter-link" data-filter="abstract">Abstract</a></li>
+            <li><a href="#gallery" class="menu-link filter-link" data-filter="nature">Nature</a></li>
+          </ul>
+        </div>
+      </li>
       <li><a href="#contact" class="menu-link">Contact</a></li>
     </ul>
   </div>
 
   <!-- HERO SECTION -->
   <section class="hero" id="home">
-    <img src="images/water.jpg"
+    <img src="images/dogs_landing_boat.jpeg"
          alt="Main photograph"
          loading="eager"
          decoding="async">
     <div class="hero-content">
       <h1>Risible Alias</h1>
       <p>
-        Lorem ipsum dolor sit amet, 
-        consectetur adipiscing elit, 
-        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua
+        I'm a photographer interested in quiet moments, subtle light, and the
+        spaces people pass through without noticing. My work focuses on
+        observation rather than explanation.
       </p>
       <a href="#gallery" class="cta-button">View Work</a>
     </div>
@@ -529,300 +623,100 @@
       <button class="filter-btn active" onclick="filterGallery('all', this)">All</button>
       <button class="filter-btn" onclick="filterGallery('landscape', this)">Landscape</button>
       <button class="filter-btn" onclick="filterGallery('abstract', this)">Abstract</button>
+      <button class="filter-btn" onclick="filterGallery('street', this)">Street</button>
       <button class="filter-btn" onclick="filterGallery('nature', this)">Nature</button>
     </div>
 
     <div class="gallery-container">
       <div class="gallery" id="gallery-grid">
-
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/sunrise.jpg" alt="sunrise" loading="lazy" decoding="async">
-        </div>
         
         <div class="gallery-item" data-category="nature">
-          <img src="images/bird.jpg" alt="bird" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/fern.jpg" alt="fern" loading="lazy" decoding="async">
-        </div>
-
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/water2.jpg" alt="water2" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/blue_shed.jpg" alt="blue_shed" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/boat_launch.jpg" alt="boat_launch" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/bridge.jpg" alt="bridge" loading="lazy" decoding="async">
-        </div>
-
-        <div class="gallery-item" data-category="nature">
-          <img src="images/flowerman.jpg" alt="flowerman" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/brown_hill.jpg" alt="brown_hill" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature abstract">
-          <img src="images/bug.jpg" alt="bug" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/cliffs.jpg" alt="cliffs" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/coast.jpg" alt="coast" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/cross_birds.jpg" alt="cross_birds" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/day.jpg" alt="day" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract landscape">
-          <img src="images/desert.jpg" alt="desert" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape nature">
-          <img src="images/dogs_landing.jpg" alt="dogs_landing" loading="lazy" decoding="async">
+          <img src="images/monke.jpeg" alt="Portrait of a Monkey" loading="lazy" decoding="async">
         </div>
 
         <div class="gallery-item" data-category="landscape">
-          <img src="images/road.jpg" alt="road" loading="lazy" decoding="async">
+          <img src="images/rice_paddy.jpeg" alt="Rice paddy field at midday" loading="lazy" decoding="async">
         </div>
         
         <div class="gallery-item" data-category="abstract">
-          <img src="images/dots.jpg" alt="dots" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/dragonfly.jpg" alt="dragonfly" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/elephant.jpg" alt="elephant" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/fallingbird.jpg" alt="fallingbird" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/ferns.jpg" alt="ferns" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape nature">
-          <img src="images/forest.jpg" alt="forest" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/glass_wave.jpg" alt="glass_wave" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/grass1.jpg" alt="grass1" loading="lazy" decoding="async">
+          <img src="images/diffraction.jpeg" alt="Diffraction" loading="lazy" decoding="async">
         </div>
 
-        <div class="gallery-item" data-category="nature">
-          <img src="images/green_bird.jpg" alt="green_bird" loading="lazy" decoding="async">
-        </div>
-        
         <div class="gallery-item" data-category="abstract">
-          <img src="images/grass3.jpg" alt="grass3" loading="lazy" decoding="async">
+          <img src="images/door.jpeg" alt="Door" loading="lazy" decoding="async">
         </div>
         
         <div class="gallery-item" data-category="nature">
-          <img src="images/hawk_eagle.jpeg" alt="hawk_eagle" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/water4.jpg" alt="water4" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/heron.jpg" alt="heron" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/hidden_day.jpg" alt="hidden_day" loading="lazy" decoding="async">
+          <img src="images/twomonkeys.jpeg" alt="Two monkeys resting" loading="lazy" decoding="async">
         </div>
 
+        <div class="gallery-item" data-category="abstract">
+          <img src="images/tiles.jpeg" alt="Tiles" loading="lazy" decoding="async">
+        </div>
+      
         <div class="gallery-item" data-category="landscape abstract">
-          <img src="images/waves.jpg" alt="waves" loading="lazy" decoding="async">
+          <img src="images/beach_layers.jpeg" alt="Layers of colour on the beach at sunrise" loading="lazy" decoding="async">
         </div>
-        
+      
         <div class="gallery-item" data-category="landscape">
-          <img src="images/hill_sunset.jpeg" alt="hill_sunset" loading="lazy" decoding="async">
+          <img src="images/boat_launch.jpeg" alt="Fishermen try to launch their boat" loading="lazy" decoding="async">
         </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/ladybug.jpg" alt="ladybug" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract landscape">
-          <img src="images/layers.jpg" alt="layers" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/monkey.jpg" alt="monkey" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature abstract">
-          <img src="images/mud.jpg" alt="mud" loading="lazy" decoding="async">
-        </div>
-        
+      
         <div class="gallery-item" data-category="landscape">
-          <img src="images/palms_ocean.jpeg" alt="palms_ocean" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/penguin.jpg" alt="penguin" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/pink_lakehouses.jpeg" alt="pink_lakehouses" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/reflected.jpg" alt="reflected" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/rice_paddy.jpeg" alt="rice_paddy" loading="lazy" decoding="async">
+          <img src="images/boat_sunrise.jpeg" alt="A boat, waiting to return to sea" loading="lazy" decoding="async">
         </div>
 
+        <div class="gallery-item" data-category="abstract">
+          <img src="images/led.jpeg" alt="LED" loading="lazy" decoding="async">
+        </div>
+
+        <div class="gallery-item" data-category="landscape">
+          <img src="images/pink_lakehouses.jpeg" alt="Colourful buildings near water" loading="lazy" decoding="async">
+        </div>
+
+        <div class="gallery-item" data-category="abstract">
+          <img src="images/to.jpeg" alt="To" loading="lazy" decoding="async">
+        </div>
+        
+        <div class="gallery-item" data-category="nature">
+          <img src="images/cat.jpeg" alt="A wild cat plays on a tree" loading="lazy" decoding="async">
+        </div>
+      
         <div class="gallery-item" data-category="landscape nature">
-          <img src="images/waterfall.jpg" alt="waterfall" loading="lazy" decoding="async">
-        </div>
-
-        <div class="gallery-item" data-category="nature">
-          <img src="images/rock.jpg" alt="rock" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/rug.jpeg" alt="rug" loading="lazy" decoding="async">
+          <img src="images/dogs_landing_boat.jpeg" alt="Three dogs, and fisherman landing" loading="lazy" decoding="async">
         </div>
 
         <div class="gallery-item" data-category="abstract">
-          <img src="images/bark.jpg" alt="bark" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/ruins.jpg" alt="ruins" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/salt.jpg" alt="salt" loading="lazy" decoding="async">
+          <img src="images/rug.jpeg" alt="Rug" loading="lazy" decoding="async">
         </div>
         
         <div class="gallery-item" data-category="nature">
-          <img src="images/sealion.jpg" alt="sealion" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature abstract">
-          <img src="images/seal.jpg" alt="seal" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/shed.jpg" alt="shed" loading="lazy" decoding="async">
+          <img src="images/green_bee_eater.jpeg" alt="A Green Bee-Eater" loading="lazy" decoding="async">
         </div>
 
         <div class="gallery-item" data-category="nature">
-          <img src="images/monke.jpeg" alt="monke" loading="lazy" decoding="async">
+          <img src="images/hawk_eagle.jpeg" alt="A Hawk-Eagle watches from a tree" loading="lazy" decoding="async">
         </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/skink.jpg" alt="skink" loading="lazy" decoding="async">
+
+        <div class="gallery-item" data-category="landscape">
+          <img src="images/hill_sunset.jpeg" alt="Anti-crepuscular rays at sunset" loading="lazy" decoding="async">
         </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/skull.jpg" alt="skull" loading="lazy" decoding="async">
+
+        <div class="gallery-item" data-category="landscape">
+          <img src="images/palms_ocean.jpeg" alt="Near the ocean, palms" loading="lazy" decoding="async">
         </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/spectrum_wave.jpg" alt="spectrum_wave" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/squirrel.jpg" alt="squirrel" loading="lazy" decoding="async">
+
+        <div class="gallery-item" data-category="landscape">
+          <img src="images/stilt_hut.jpeg" alt="Stilt-huts" loading="lazy" decoding="async">
         </div>
 
         <div class="gallery-item" data-category="abstract">
-          <img src="images/grass4.jpg" alt="grass4" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/starfish.jpg" alt="starfish" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/stilt_hut.jpeg" alt="stilt_hut" loading="lazy" decoding="async">
+          <img src="images/table1.jpeg" alt="Table" loading="lazy" decoding="async">
         </div>
 
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/water.jpg" alt="water" loading="lazy" decoding="async">
+        <div class="gallery-item" data-category="nature landscape">
+          <img src="images/sunrise_dogs.jpeg" alt="Three dogs play as the sun rises" loading="lazy" decoding="async">
         </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/thorns.jpg" alt="thorns" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/to.jpg" alt="to" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape nature">
-          <img src="images/trees.jpg" alt="trees" loading="lazy" decoding="async">
-        </div>
-
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/water3.jpg" alt="water3" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/two_birds.jpg" alt="two_birds" loading="lazy" decoding="async">
-        </div>
-
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/grass2.jpg" alt="grass2" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/two_rocks.jpg" alt="two_rocks" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/twomonkeys.jpeg" alt="twomonkeys" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/bike.jpg" alt="bike" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/wave_breaking.jpg" alt="wave_breaking" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/whio.jpg" alt="whio" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape nature">
-          <img src="images/sunrise_dogs.jpeg" alt="sunrise_dogs" loading="lazy" decoding="async">
-        </div>
-        
       </div>
     </div>
   </section>
@@ -831,7 +725,7 @@
   <section id="contact">
     <h2>Get in Touch</h2>
     <p>
-      Questions, comments etc.:
+      Interested in prints, licensing, or collaborations?
     </p>
     <a href="mailto:youremail@example.com">youremail@example.com</a>
   </section>
@@ -869,10 +763,42 @@
 
     // Close menu when clicking a link
     menuLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        menuToggle.classList.remove('open');
-        menuOverlay.classList.remove('open');
-        document.body.style.overflow = 'auto';
+      link.addEventListener('click', (e) => {
+        // Check if this is a filter link
+        if (link.classList.contains('filter-link')) {
+          e.preventDefault();
+          const filterCategory = link.getAttribute('data-filter');
+          
+          // Close menu
+          menuToggle.classList.remove('open');
+          menuOverlay.classList.remove('open');
+          document.body.style.overflow = 'auto';
+          
+          // Scroll to gallery
+          const gallerySection = document.getElementById('gallery');
+          gallerySection.scrollIntoView({ behavior: 'smooth' });
+          
+          // Apply filter after a short delay to let scroll start
+          setTimeout(() => {
+            const filterBtn = document.querySelector(`.filter-btn[onclick*="${filterCategory}"]`);
+            if (filterBtn) {
+              filterBtn.click();
+            }
+          }, 300);
+        } else {
+          // Normal menu link - close menu
+          menuToggle.classList.remove('open');
+          menuOverlay.classList.remove('open');
+          document.body.style.overflow = 'auto';
+          
+          // Add a small delay to ensure proper scroll position after images load
+          if (link.getAttribute('href') === '#contact') {
+            e.preventDefault();
+            setTimeout(() => {
+              document.getElementById('contact').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+          }
+        }
       });
     });
 
