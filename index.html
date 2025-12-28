@@ -52,7 +52,7 @@
       color: var(--accent-hover);
     }
 
-    /* --- HAMBURGER MENU & TREE NAVIGATION --- */
+    /* --- HAMBURGER MENU & NAVIGATION --- */
     .menu-toggle {
       position: fixed;
       top: 2rem;
@@ -107,7 +107,6 @@
     .menu-nav {
       list-style: none;
       text-align: left;
-      /* Fixed width ensures the tree structure stays aligned */
       width: 300px; 
       margin: 0 auto;
     }
@@ -130,74 +129,53 @@
       font-weight: 300;
       letter-spacing: 0.05em;
       color: var(--text);
-      display: block; /* Ensure full width for click area */
+      display: block;
     }
 
-    /* --- REFINED TREE SUBMENU STYLING --- */
+    /* --- SIMPLIFIED GALLERY MENU STYLING --- */
     .gallery-tree-item {
         position: relative;
     }
     
     .gallery-parent {
-        /* The main "Gallery (All)" text */
         display: block;
         font-size: 2.5rem;
         font-weight: 300;
-        margin-bottom: 0.5rem;
+        letter-spacing: 0.05em;
+        color: var(--text);
+        margin-bottom: 0.75rem;
         cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .gallery-parent:hover {
+        color: var(--accent-hover);
     }
 
     .gallery-submenu {
-        /* This creates the vertical "Spine" */
-        border-left: 1px solid rgba(255, 255, 255, 0.15);
-        margin-left: 0.8rem; /* Offset from the parent text */
-        padding-left: 0;
+        margin-left: 2.5rem;
         display: flex;
         flex-direction: column;
+        gap: 0.5rem;
     }
 
     .gallery-submenu a {
-        position: relative;
-        font-size: 1.25rem; /* Smaller font as requested */
+        font-size: 1.1rem;
         color: var(--muted);
         font-family: 'Montserrat', sans-serif;
         font-weight: 300;
-        letter-spacing: 0.05em;
-        padding: 0.6rem 0 0.6rem 1.5rem; /* Space for the curve */
+        letter-spacing: 0.08em;
         text-decoration: none;
         display: block;
-        transition: color 0.3s ease, transform 0.3s ease;
+        transition: color 0.3s ease, opacity 0.3s ease;
         cursor: pointer;
+        transform-origin: left center;
     }
 
     .gallery-submenu a:hover {
         color: var(--accent);
-        transform: translateX(5px);
+        opacity: 0.85;
     }
-
-    /* The Elegant Curved Connector */
-    .gallery-submenu a::before {
-        content: '';
-        position: absolute;
-        left: 0; /* Starts exactly at the spine */
-        top: 0;
-        width: 1rem; /* Width of the curve */
-        height: 50%; /* Go halfway down the item height */
-        
-        /* The curve magic: transparent background, with border on bottom and left */
-        border-left: 1px solid rgba(255, 255, 255, 0.15);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-        border-bottom-left-radius: 12px; /* Smooth curve radius */
-        
-        /* Hide the top part of the left border so it flows from the spine */
-        /* Actually, we want it to connect to the item above. */
-        /* To make it look like a continuous branch, we offset it slightly */
-        transform: translateY(2px); 
-    }
-
-    /* Remove the vertical line for the last item's overflowing tail if desired 
-       (Optional, but often looks cleaner to keep it simpler) */
-
 
     /* --- HERO --- */
     .hero {
@@ -268,7 +246,6 @@
     #gallery {
       padding-top: 6rem;
       min-height: 100vh;
-      /* Prevent layout thrashing */
       contain: content; 
     }
 
@@ -323,33 +300,80 @@
 
     /* --- LIGHTBOX --- */
     .lightbox {
-      display: none;
       position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 15, 15, 0.98);
-      z-index: 3000;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 15, 15, 0.92);
       backdrop-filter: blur(8px);
       opacity: 0;
-      transition: opacity 0.3s ease;
+      pointer-events: none;
+      transition: opacity 0.45s ease;
+      z-index: 3000;
     }
-    .lightbox.active { display: flex; align-items: center; justify-content: center; opacity: 1; }
-    .lightbox-content { max-width: 90vw; max-height: 90vh; position: relative; }
+    .lightbox.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .lightbox-content {
+      max-width: 90vw;
+      max-height: 90vh;
+      position: relative;
+    }
+    /* image reveal */
     .lightbox-content img {
-      max-width: 100%; max-height: 90vh; object-fit: contain;
-      box-shadow: 0 0 40px rgba(0,0,0,0.6);
-      transition: opacity 0.3s ease;
+      max-width: 100%;
+      max-height: 90vh;
+      object-fit: contain;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
       user-select: none;
+      opacity: 0;
+      transition: opacity 0.35s ease 0.1s;
     }
-    .lightbox-content img.fade-out { opacity: 0.4; }
-
-    .close-btn, .nav-btn {
-      position: absolute; background: transparent; color: var(--muted);
-      border: none; cursor: pointer; font-size: 2rem; padding: 1rem; z-index: 3001;
+    .lightbox.active .lightbox-content img {
+      opacity: 1;
     }
-    .close-btn:hover, .nav-btn:hover { color: var(--accent); }
-    .close-btn { top: 1.5rem; right: 2rem; font-size: 3rem; line-height: 0.5; }
-    .prev-btn { left: 2rem; top: 50%; transform: translateY(-50%); }
-    .next-btn { right: 2rem; top: 50%; transform: translateY(-50%); }
+    /* navigation fade during image change */
+    .lightbox-content img.fade-out {
+      opacity: 0.65;
+      transition: opacity 0.25s ease;
+    }
+    /* controls */
+    .close-btn,
+    .nav-btn {
+      position: absolute;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 2rem;
+      padding: 1rem;
+      z-index: 3001;
+      opacity: 0.6;
+      transition: color 0.2s ease, opacity 0.2s ease;
+    }
+    .close-btn:hover,
+    .nav-btn:hover {
+      color: var(--accent);
+      opacity: 1;
+    }
+    .close-btn {
+      top: 1.5rem;
+      right: 2rem;
+      font-size: 3rem;
+      line-height: 0.5;
+    }
+    .prev-btn {
+      left: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .next-btn {
+      right: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
 
     /* --- CONTACT --- */
     #contact {
@@ -376,11 +400,13 @@
     @media (max-width: 900px) {
       .gallery { column-count: 2; }
       .gallery-parent { font-size: 2rem; }
+      .gallery-submenu { margin-left: 2rem; }
     }
     @media (max-width: 600px) {
       .gallery { column-count: 1; }
       .menu-nav { width: 100%; padding: 0 2rem; }
       .gallery-parent { font-size: 1.8rem; }
+      .gallery-submenu { margin-left: 1.5rem; }
       .prev-btn, .next-btn { display: none; }
       .menu-toggle { top: 1.5rem; left: 1.5rem; }
     }
@@ -400,7 +426,7 @@
       <li><a href="#home" class="menu-link">Home</a></li>
       
       <li class="gallery-tree-item">
-          <a href="#gallery" class="gallery-parent" onclick="filterFromMenu('all')">Gallery (All)</a>
+          <a href="#gallery" class="gallery-parent" onclick="filterFromMenu('all')">Gallery</a>
           
           <div class="gallery-submenu">
              <a onclick="filterFromMenu('landscape')">Landscape</a>
@@ -549,11 +575,9 @@
       document.body.style.overflow = menuOverlay.classList.contains('open') ? 'hidden' : 'auto';
     });
 
-    // Close when clicking simple links
     menuLinks.forEach(link => {
       if(!link.classList.contains('gallery-parent')) { 
           link.addEventListener('click', (e) => {
-              // Special handling for Contact to prevent jumpiness
               if(link.getAttribute('href') === '#contact') {
                   e.preventDefault();
                   smoothScrollToContact();
@@ -567,48 +591,29 @@
       if (e.target === menuOverlay) closeMenu();
     });
 
-    // --- FIX: SMART SCROLL TO CONTACT ---
-    // This watches for layout shifts (images loading) and keeps the contact section in view
     function smoothScrollToContact() {
         const contactSection = document.getElementById('contact');
-        
-        // 1. Initial Scroll
         contactSection.scrollIntoView({ behavior: 'smooth' });
         
-        // 2. "Active Anchoring": Watch for height changes in the gallery 
-        // and re-adjust the scroll if the contact section moves.
         const galleryGrid = document.getElementById('gallery-grid');
         let checks = 0;
         
-        // Using ResizeObserver to detect the EXACT moment images expand
         const resizeObserver = new ResizeObserver(() => {
-            // If we are currently trying to look at the contact section, keep it in view
-            // We use 'auto' behavior here to make the correction instant and invisible
             contactSection.scrollIntoView({ behavior: 'auto', block: 'start' });
-            
             checks++;
-            // Stop watching after 4 seconds (enough time for most images to load)
             if (checks > 20) { 
                 resizeObserver.disconnect();
             }
         });
         
         resizeObserver.observe(galleryGrid);
-        
-        // Safety timeout to disconnect eventually if no resize happens
         setTimeout(() => resizeObserver.disconnect(), 4000);
     }
 
-
-    // --- FUNCTION: Filter from Hamburger Menu ---
     function filterFromMenu(category) {
         closeMenu();
-        
-        // 1. Scroll to gallery
         const gallerySection = document.getElementById('gallery');
         gallerySection.scrollIntoView({ behavior: 'smooth' });
-
-        // 2. Find the corresponding button and trigger the filter
         setTimeout(() => {
             const btn = document.querySelector(`.filter-btn[onclick*="'${category}'"]`);
             if (btn) filterGallery(category, btn);
