@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Caithan Mark</title>
+  <title>Risible Alias</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -221,13 +221,22 @@
       width: 100%;
       text-align: center;
       background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
-      backdrop-filter: blur(8px);
     }
 
     .hero-content h1 {
       margin: 0 0 1rem 0;
       font-size: clamp(2rem, 5vw, 3.5rem);
       letter-spacing: 0.05em;
+      position: relative;
+    }
+
+    .hero-content h1::before {
+      content: '';
+      position: absolute;
+      inset: -20px -40px;
+      backdrop-filter: blur(12px);
+      z-index: -1;
+      border-radius: 8px;
     }
 
     .hero-content p {
@@ -235,6 +244,16 @@
       margin: 0 auto 2rem;
       color: var(--muted);
       font-size: 1.05rem;
+      position: relative;
+    }
+
+    .hero-content p::before {
+      content: '';
+      position: absolute;
+      inset: -15px -30px;
+      backdrop-filter: blur(10px);
+      z-index: -1;
+      border-radius: 8px;
     }
 
     .cta-button {
@@ -491,7 +510,7 @@
   <section class="hero" id="home">
     <img src="images/water.jpg" alt="Main photograph" loading="eager" decoding="async">
     <div class="hero-content">
-      <h1>Caithan Mark</h1>
+      <h1>Risible Alias</h1>
       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
       <a href="#gallery" class="cta-button">View Work</a>
     </div>
@@ -590,11 +609,11 @@
   <section id="contact">
     <h2>Get in Touch</h2>
     <p>Questions, comments etc.:</p>
-    <a href="mailto:precept_38fellow@icloud.com">email</a>
+    <a href="mailto:youremail@example.com">youremail@example.com</a>
   </section>
 
   <footer>
-    <p>&copy; 2025 Caithan Mark All rights reserved.</p>
+    <p>&copy; 2025 Risible Alias. All rights reserved.</p>
   </footer>
 
   <div class="lightbox" id="lightbox">
