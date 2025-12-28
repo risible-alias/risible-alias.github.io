@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lorem Ipsum — Photography</title>
+  <title>Risible Alias</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,7 +52,7 @@
       color: var(--accent-hover);
     }
 
-    /* --- HAMBURGER MENU --- */
+    /* --- HAMBURGER MENU & TREE NAVIGATION --- */
     .menu-toggle {
       position: fixed;
       top: 2rem;
@@ -78,19 +78,10 @@
       border-radius: 2px;
     }
 
-    .menu-toggle.open .hamburger-line:nth-child(1) {
-      transform: rotate(45deg) translate(8px, 8px);
-    }
+    .menu-toggle.open .hamburger-line:nth-child(1) { transform: rotate(45deg) translate(8px, 8px); }
+    .menu-toggle.open .hamburger-line:nth-child(2) { opacity: 0; }
+    .menu-toggle.open .hamburger-line:nth-child(3) { transform: rotate(-45deg) translate(7px, -7px); }
 
-    .menu-toggle.open .hamburger-line:nth-child(2) {
-      opacity: 0;
-    }
-
-    .menu-toggle.open .hamburger-line:nth-child(3) {
-      transform: rotate(-45deg) translate(7px, -7px);
-    }
-
-    /* Menu Overlay */
     .menu-overlay {
       position: fixed;
       top: 0;
@@ -115,39 +106,116 @@
 
     .menu-nav {
       list-style: none;
-      text-align: center;
+      /* Align to left slightly so the tree structure is visible */
+      text-align: left; 
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 2rem;
     }
 
-    .menu-nav li {
+    .menu-nav > li {
       margin: 2rem 0;
       opacity: 0;
       transform: translateY(20px);
       transition: all 0.4s ease;
     }
 
-    .menu-overlay.open .menu-nav li {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .menu-overlay.open .menu-nav > li { opacity: 1; transform: translateY(0); }
+    .menu-overlay.open .menu-nav > li:nth-child(1) { transition-delay: 0.1s; }
+    .menu-overlay.open .menu-nav > li:nth-child(2) { transition-delay: 0.2s; }
+    .menu-overlay.open .menu-nav > li:nth-child(3) { transition-delay: 0.3s; }
 
-    .menu-overlay.open .menu-nav li:nth-child(1) { transition-delay: 0.1s; }
-    .menu-overlay.open .menu-nav li:nth-child(2) { transition-delay: 0.2s; }
-    .menu-overlay.open .menu-nav li:nth-child(3) { transition-delay: 0.3s; }
-
-    .menu-nav a {
+    /* Main Menu Links */
+    .menu-link {
       font-size: 2.5rem;
       font-weight: 300;
       letter-spacing: 0.05em;
       color: var(--text);
-      text-decoration: none;
-      transition: color 0.3s ease;
+      display: inline-block;
     }
 
-    .menu-nav a:hover {
+    /* --- TREE SUBMENU STYLING --- */
+    .gallery-tree-container {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5rem;
+    }
+
+    .gallery-parent {
+      /* Keep the main parent link large */
+      font-size: 2.5rem;
+      font-weight: 300;
+      white-space: nowrap;
+    }
+
+    .gallery-submenu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      padding-top: 0.5rem; /* Align first item with parent roughly */
+      position: relative;
+    }
+
+    /* The Vertical Spine of the tree */
+    .gallery-submenu::before {
+      content: '';
+      position: absolute;
+      left: -1rem; /* Position to the left of the items */
+      top: 1.2rem; /* Start below the first curve top */
+      bottom: 1.2rem; /* End before the last curve bottom */
+      width: 1px;
+      background: var(--muted);
+      opacity: 0.3;
+    }
+
+    /* Individual Submenu Items */
+    .gallery-submenu a {
+      font-size: 1.2rem; /* Smaller font as requested */
+      color: var(--muted);
+      position: relative;
+      transition: color 0.3s ease, transform 0.3s ease;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+    }
+
+    .gallery-submenu a:hover {
       color: var(--accent);
+      transform: translateX(5px);
     }
 
-    /* --- HERO SECTION --- */
+    /* The Curved Connector Lines */
+    .gallery-submenu a::before {
+      content: '';
+      position: absolute;
+      left: -1.5rem; /* Reach back to the spine */
+      top: 50%;
+      width: 1rem;
+      height: 50%; /* Height helps create the corner */
+      border-left: 1px solid rgba(255, 255, 255, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      border-bottom-left-radius: 10px; /* The Curve */
+      transform: translateY(-50%); /* Center vertically */
+      pointer-events: none;
+    }
+
+    /* Remove the vertical part for the top item to create a smooth start? 
+       Actually, standard tree lines look like forks. 
+       Let's refine to connect to the parent. */
+    
+    .gallery-tree-connector {
+        /* A special curved line connecting Parent to the spine */
+        position: absolute;
+        width: 20px;
+        height: 1px;
+        background: var(--muted);
+        opacity: 0.3;
+        top: 2rem; /* Approximate center of "Gallery" text */
+        left: -20px;
+    }
+
+    /* --- HERO --- */
     .hero {
       position: relative;
       min-height: 100vh;
@@ -178,16 +246,11 @@
       padding: 3rem 2rem;
       width: 100%;
       text-align: center;
-      background: linear-gradient(
-        to top,
-        rgba(0,0,0,0.7),
-        rgba(0,0,0,0)
-      );
+      background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
     }
 
     .hero-content h1 {
       margin: 0 0 1rem 0;
-      font-weight: 400;
       font-size: clamp(2rem, 5vw, 3.5rem);
       letter-spacing: 0.05em;
     }
@@ -197,7 +260,6 @@
       margin: 0 auto 2rem;
       color: var(--muted);
       font-size: 1.05rem;
-      line-height: 1.7;
     }
 
     .cta-button {
@@ -209,44 +271,25 @@
       border-radius: 4px;
       font-size: 1rem;
       font-weight: 500;
-      cursor: pointer;
       text-decoration: none;
       transition: all 0.3s ease;
-      letter-spacing: 0.03em;
     }
 
     .cta-button:hover {
       background: var(--accent-hover);
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(47, 107, 85, 0.3);
     }
 
-    /* --- GALLERY SECTION --- */
+    /* --- GALLERY --- */
     #gallery {
       padding-top: 6rem;
       min-height: 100vh;
     }
 
-    .section-header {
-      text-align: center;
-      margin-bottom: 3rem;
-      padding: 0 2rem;
-    }
+    .section-header { text-align: center; margin-bottom: 3rem; padding: 0 2rem; }
+    .section-header h2 { font-size: 2rem; margin-bottom: 0.5rem; letter-spacing: 0.05em; }
 
-    .section-header h2 {
-      font-size: 2rem;
-      font-weight: 400;
-      margin-bottom: 0.5rem;
-      letter-spacing: 0.05em;
-    }
-
-    /* Filter Buttons */
-    .filter-container {
-      margin-bottom: 3rem;
-      text-align: center;
-      padding: 0 1rem;
-    }
-
+    .filter-container { margin-bottom: 3rem; text-align: center; padding: 0 1rem; }
     .filter-btn {
       background: transparent;
       color: var(--muted);
@@ -260,28 +303,11 @@
       transition: all 0.3s ease;
       border-radius: 4px;
     }
+    .filter-btn:hover { color: var(--accent-hover); }
+    .filter-btn.active { color: var(--accent); border-color: var(--accent); background: rgba(47, 107, 85, 0.08); }
 
-    .filter-btn:hover {
-      color: var(--accent-hover);
-    }
-
-    .filter-btn.active {
-      color: var(--accent);
-      border-color: var(--accent);
-      background: rgba(47, 107, 85, 0.08);
-    }
-
-    /* Gallery Grid */
-    .gallery-container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 2rem 4rem;
-    }
-
-    .gallery {
-      column-count: 3;
-      column-gap: 1.5rem;
-    }
+    .gallery-container { max-width: 1400px; margin: 0 auto; padding: 0 2rem 4rem; }
+    .gallery { column-count: 3; column-gap: 1.5rem; }
 
     .gallery-item {
       break-inside: avoid;
@@ -296,15 +322,9 @@
       transition: opacity 0.8s ease-out, transform 0.8s ease-out;
     }
 
-    .gallery-item.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .gallery-item.hidden {
-      display: none;
-    }
-
+    .gallery-item.visible { opacity: 1; transform: translateY(0); }
+    .gallery-item.hidden { display: none; }
+    
     .gallery-item img {
       width: 100%;
       height: auto;
@@ -312,182 +332,78 @@
       transition: transform 0.6s ease, opacity 0.5s ease;
       opacity: 0;
     }
-
-    .gallery-item img.is-loaded {
-      opacity: 1;
-    }
-
-    .gallery-item:hover img {
-      transform: scale(1.03);
-    }
+    .gallery-item img.is-loaded { opacity: 1; }
+    .gallery-item:hover img { transform: scale(1.03); }
 
     /* --- LIGHTBOX --- */
     .lightbox {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(15, 15, 15, 0.98);
       z-index: 3000;
       backdrop-filter: blur(8px);
       opacity: 0;
       transition: opacity 0.3s ease;
     }
-
-    .lightbox.active {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 1;
-    }
-
-    .lightbox-content {
-      max-width: 90vw;
-      max-height: 90vh;
-      position: relative;
-    }
-
+    .lightbox.active { display: flex; align-items: center; justify-content: center; opacity: 1; }
+    .lightbox-content { max-width: 90vw; max-height: 90vh; position: relative; }
     .lightbox-content img {
-      max-width: 100%;
-      max-height: 90vh;
-      object-fit: contain;
+      max-width: 100%; max-height: 90vh; object-fit: contain;
       box-shadow: 0 0 40px rgba(0,0,0,0.6);
       transition: opacity 0.3s ease;
       user-select: none;
     }
-
-    .lightbox-content img.fade-out {
-      opacity: 0.4;
-    }
+    .lightbox-content img.fade-out { opacity: 0.4; }
 
     .close-btn, .nav-btn {
-      position: absolute;
-      background: transparent;
-      color: var(--muted);
-      border: none;
-      cursor: pointer;
-      font-size: 2rem;
-      transition: color 0.2s;
-      padding: 1rem;
-      z-index: 3001;
+      position: absolute; background: transparent; color: var(--muted);
+      border: none; cursor: pointer; font-size: 2rem; padding: 1rem; z-index: 3001;
     }
+    .close-btn:hover, .nav-btn:hover { color: var(--accent); }
+    .close-btn { top: 1.5rem; right: 2rem; font-size: 3rem; line-height: 0.5; }
+    .prev-btn { left: 2rem; top: 50%; transform: translateY(-50%); }
+    .next-btn { right: 2rem; top: 50%; transform: translateY(-50%); }
 
-    .close-btn:hover, .nav-btn:hover {
-      color: var(--accent);
-    }
-
-    .close-btn { 
-      top: 1.5rem; 
-      right: 2rem; 
-      font-size: 3rem; 
-      line-height: 0.5; 
-    }
-    
-    .prev-btn { 
-      left: 2rem; 
-      top: 50%; 
-      transform: translateY(-50%); 
-    }
-    
-    .next-btn { 
-      right: 2rem; 
-      top: 50%; 
-      transform: translateY(-50%); 
-    }
-
-    /* --- CONTACT SECTION --- */
+    /* --- CONTACT --- */
     #contact {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 6rem 2rem 4rem;
-      text-align: center;
+      max-width: 800px; margin: 0 auto; padding: 6rem 2rem 4rem; text-align: center;
+      /* Scroll-margin prevents the header from covering content if we had a sticky header */
+      scroll-margin-top: 50px; 
     }
+    #contact h2 { font-size: 2rem; font-weight: 400; margin-bottom: 1.5rem; }
+    #contact p { color: var(--muted); margin-bottom: 1.5rem; }
+    #contact a { font-size: 1.1rem; color: var(--text); }
 
-    #contact h2 {
-      font-size: 2rem;
-      font-weight: 400;
-      margin-bottom: 1.5rem;
-      letter-spacing: 0.05em;
-    }
-
-    #contact p {
-      color: var(--muted);
-      font-size: 1.05rem;
-      margin-bottom: 1.5rem;
-    }
-
-    #contact a {
-      font-size: 1.1rem;
-      color: var(--text);
-    }
-
-    /* --- BACK TO TOP BUTTON --- */
+    /* --- BACK TO TOP --- */
     .back-to-top {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      width: 50px;
-      height: 50px;
-      background: var(--surface);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.3s ease;
-      z-index: 1500;
+      position: fixed; bottom: 2rem; right: 2rem; width: 50px; height: 50px;
+      background: var(--surface); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 1500;
     }
+    .back-to-top.visible { opacity: 1; pointer-events: all; }
+    .back-to-top:hover { background: var(--accent); transform: translateY(-3px); }
+    .back-to-top::before { content: '↑'; font-size: 1.5rem; color: var(--text); }
 
-    .back-to-top.visible {
-      opacity: 1;
-      pointer-events: all;
-    }
+    footer { text-align: center; padding: 3rem 2rem; color: #666; font-size: 0.85rem; border-top: 1px solid #444; }
 
-    .back-to-top:hover {
-      background: var(--accent);
-      transform: translateY(-3px);
-    }
-
-    .back-to-top::before {
-      content: '↑';
-      font-size: 1.5rem;
-      color: var(--text);
-    }
-
-    /* --- FOOTER --- */
-    footer {
-      text-align: center;
-      padding: 3rem 2rem;
-      color: #666;
-      font-size: 0.85rem;
-      border-top: 1px solid #444;
-    }
-
-    /* --- RESPONSIVE --- */
     @media (max-width: 900px) {
       .gallery { column-count: 2; }
-      .menu-nav a { font-size: 2rem; }
+      .gallery-parent { font-size: 2rem; }
     }
-
     @media (max-width: 600px) {
       .gallery { column-count: 1; }
-      .menu-nav a { font-size: 1.5rem; }
+      .menu-nav { padding: 1rem; text-align: left; }
+      .gallery-parent { font-size: 1.8rem; }
       .prev-btn, .next-btn { display: none; }
-      .hero-content h1 { font-size: 1.8rem; }
       .menu-toggle { top: 1.5rem; left: 1.5rem; }
-      .back-to-top { bottom: 1.5rem; right: 1.5rem; }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- HAMBURGER MENU -->
   <button class="menu-toggle" id="menu-toggle" aria-label="Menu">
     <div class="hamburger-line"></div>
     <div class="hamburger-line"></div>
@@ -497,362 +413,139 @@
   <div class="menu-overlay" id="menu-overlay">
     <ul class="menu-nav">
       <li><a href="#home" class="menu-link">Home</a></li>
-      <li><a href="#gallery" class="menu-link">Gallery</a></li>
+      
+      <li>
+        <div class="gallery-tree-container">
+          <a href="#gallery" class="menu-link gallery-parent" onclick="filterFromMenu('all')">Gallery (All)</a>
+          
+          <div class="gallery-submenu">
+             <a onclick="filterFromMenu('landscape')">Landscape</a>
+             <a onclick="filterFromMenu('abstract')">Abstract</a>
+             <a onclick="filterFromMenu('nature')">Nature</a>
+          </div>
+        </div>
+      </li>
+
       <li><a href="#contact" class="menu-link">Contact</a></li>
     </ul>
   </div>
 
-  <!-- HERO SECTION -->
   <section class="hero" id="home">
-    <img src="images/water.jpg"
-         alt="Main photograph"
-         loading="eager"
-         decoding="async">
+    <img src="images/water.jpg" alt="Main photograph" loading="eager" decoding="async">
     <div class="hero-content">
       <h1>Risible Alias</h1>
-      <p>
-        Lorem ipsum dolor sit amet, 
-        consectetur adipiscing elit, 
-        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua
-      </p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
       <a href="#gallery" class="cta-button">View Work</a>
     </div>
   </section>
 
-  <!-- GALLERY SECTION -->
   <section id="gallery">
     <div class="section-header">
       <h2>Selected Work</h2>
     </div>
 
     <div class="filter-container">
-      <button class="filter-btn active" onclick="filterGallery('all', this)">All</button>
-      <button class="filter-btn" onclick="filterGallery('landscape', this)">Landscape</button>
-      <button class="filter-btn" onclick="filterGallery('abstract', this)">Abstract</button>
-      <button class="filter-btn" onclick="filterGallery('nature', this)">Nature</button>
+      <button class="filter-btn active" data-filter="all" onclick="filterGallery('all', this)">All</button>
+      <button class="filter-btn" data-filter="landscape" onclick="filterGallery('landscape', this)">Landscape</button>
+      <button class="filter-btn" data-filter="abstract" onclick="filterGallery('abstract', this)">Abstract</button>
+      <button class="filter-btn" data-filter="nature" onclick="filterGallery('nature', this)">Nature</button>
     </div>
 
     <div class="gallery-container">
       <div class="gallery" id="gallery-grid">
-
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/sunrise.jpg" alt="sunrise" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/bird.jpg" alt="bird" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/fern.jpg" alt="fern" loading="lazy" decoding="async">
-        </div>
-
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/water2.jpg" alt="water2" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/blue_shed.jpg" alt="blue_shed" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/boat_launch.jpg" alt="boat_launch" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/bridge.jpg" alt="bridge" loading="lazy" decoding="async">
-        </div>
-
-        <div class="gallery-item" data-category="nature">
-          <img src="images/flowerman.jpg" alt="flowerman" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/brown_hill.jpg" alt="brown_hill" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature abstract">
-          <img src="images/bug.jpg" alt="bug" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/cliffs.jpg" alt="cliffs" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/coast.jpg" alt="coast" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/cross_birds.jpg" alt="cross_birds" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/day.jpg" alt="day" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract landscape">
-          <img src="images/desert.jpg" alt="desert" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape nature">
-          <img src="images/dogs_landing.jpg" alt="dogs_landing" loading="lazy" decoding="async">
-        </div>
-
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/road.jpg" alt="road" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/dots.jpg" alt="dots" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/dragonfly.jpg" alt="dragonfly" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/elephant.jpg" alt="elephant" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/fallingbird.jpg" alt="fallingbird" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/ferns.jpg" alt="ferns" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape nature">
-          <img src="images/forest.jpg" alt="forest" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/glass_wave.jpg" alt="glass_wave" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/grass1.jpg" alt="grass1" loading="lazy" decoding="async">
-        </div>
-
-        <div class="gallery-item" data-category="nature">
-          <img src="images/green_bird.jpg" alt="green_bird" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/grass3.jpg" alt="grass3" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/hawk_eagle.jpeg" alt="hawk_eagle" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/water4.jpg" alt="water4" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/heron.jpg" alt="heron" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/hidden_day.jpg" alt="hidden_day" loading="lazy" decoding="async">
-        </div>
-
-        <div class="gallery-item" data-category="landscape abstract">
-          <img src="images/waves.jpg" alt="waves" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/hill_sunset.jpeg" alt="hill_sunset" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/ladybug.jpg" alt="ladybug" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract landscape">
-          <img src="images/layers.jpg" alt="layers" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/monkey.jpg" alt="monkey" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature abstract">
-          <img src="images/mud.jpg" alt="mud" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/palms_ocean.jpeg" alt="palms_ocean" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/penguin.jpg" alt="penguin" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/pink_lakehouses.jpeg" alt="pink_lakehouses" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/reflected.jpg" alt="reflected" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/rice_paddy.jpeg" alt="rice_paddy" loading="lazy" decoding="async">
-        </div>
-
-        <div class="gallery-item" data-category="landscape nature">
-          <img src="images/waterfall.jpg" alt="waterfall" loading="lazy" decoding="async">
-        </div>
-
-        <div class="gallery-item" data-category="nature">
-          <img src="images/rock.jpg" alt="rock" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/rug.jpeg" alt="rug" loading="lazy" decoding="async">
-        </div>
-
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/bark.jpg" alt="bark" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/ruins.jpg" alt="ruins" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/salt.jpg" alt="salt" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/sealion.jpg" alt="sealion" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature abstract">
-          <img src="images/seal.jpg" alt="seal" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/shed.jpg" alt="shed" loading="lazy" decoding="async">
-        </div>
-
-        <div class="gallery-item" data-category="nature">
-          <img src="images/monke.jpeg" alt="monke" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/skink.jpg" alt="skink" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/skull.jpg" alt="skull" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/spectrum_wave.jpg" alt="spectrum_wave" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/squirrel.jpg" alt="squirrel" loading="lazy" decoding="async">
-        </div>
-
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/grass4.jpg" alt="grass4" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/starfish.jpg" alt="starfish" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/stilt_hut.jpeg" alt="stilt_hut" loading="lazy" decoding="async">
-        </div>
-
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/water.jpg" alt="water" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/thorns.jpg" alt="thorns" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/to.jpg" alt="to" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape nature">
-          <img src="images/trees.jpg" alt="trees" loading="lazy" decoding="async">
-        </div>
-
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/water3.jpg" alt="water3" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/two_birds.jpg" alt="two_birds" loading="lazy" decoding="async">
-        </div>
-
-        <div class="gallery-item" data-category="abstract">
-          <img src="images/grass2.jpg" alt="grass2" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/two_rocks.jpg" alt="two_rocks" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/twomonkeys.jpeg" alt="twomonkeys" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/bike.jpg" alt="bike" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape">
-          <img src="images/wave_breaking.jpg" alt="wave_breaking" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="nature">
-          <img src="images/whio.jpg" alt="whio" loading="lazy" decoding="async">
-        </div>
-        
-        <div class="gallery-item" data-category="landscape nature">
-          <img src="images/sunrise_dogs.jpeg" alt="sunrise_dogs" loading="lazy" decoding="async">
-        </div>
-        
+        <div class="gallery-item" data-category="landscape"><img src="images/sunrise.jpg" alt="sunrise" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/bird.jpg" alt="bird" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/fern.jpg" alt="fern" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/water2.jpg" alt="water2" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/blue_shed.jpg" alt="blue_shed" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/boat_launch.jpg" alt="boat_launch" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/bridge.jpg" alt="bridge" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/flowerman.jpg" alt="flowerman" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/brown_hill.jpg" alt="brown_hill" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature abstract"><img src="images/bug.jpg" alt="bug" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/cliffs.jpg" alt="cliffs" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/coast.jpg" alt="coast" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/cross_birds.jpg" alt="cross_birds" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/day.jpg" alt="day" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract landscape"><img src="images/desert.jpg" alt="desert" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape nature"><img src="images/dogs_landing.jpg" alt="dogs_landing" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/road.jpg" alt="road" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/dots.jpg" alt="dots" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/dragonfly.jpg" alt="dragonfly" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/elephant.jpg" alt="elephant" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/fallingbird.jpg" alt="fallingbird" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/ferns.jpg" alt="ferns" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape nature"><img src="images/forest.jpg" alt="forest" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/glass_wave.jpg" alt="glass_wave" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/grass1.jpg" alt="grass1" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/green_bird.jpg" alt="green_bird" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/grass3.jpg" alt="grass3" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/hawk_eagle.jpeg" alt="hawk_eagle" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/water4.jpg" alt="water4" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/heron.jpg" alt="heron" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/hidden_day.jpg" alt="hidden_day" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape abstract"><img src="images/waves.jpg" alt="waves" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/hill_sunset.jpeg" alt="hill_sunset" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/ladybug.jpg" alt="ladybug" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract landscape"><img src="images/layers.jpg" alt="layers" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/monkey.jpg" alt="monkey" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature abstract"><img src="images/mud.jpg" alt="mud" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/palms_ocean.jpeg" alt="palms_ocean" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/penguin.jpg" alt="penguin" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/pink_lakehouses.jpeg" alt="pink_lakehouses" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/reflected.jpg" alt="reflected" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/rice_paddy.jpeg" alt="rice_paddy" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape nature"><img src="images/waterfall.jpg" alt="waterfall" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/rock.jpg" alt="rock" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/rug.jpeg" alt="rug" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/bark.jpg" alt="bark" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/ruins.jpg" alt="ruins" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/salt.jpg" alt="salt" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/sealion.jpg" alt="sealion" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature abstract"><img src="images/seal.jpg" alt="seal" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/shed.jpg" alt="shed" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/monke.jpeg" alt="monke" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/skink.jpg" alt="skink" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/skull.jpg" alt="skull" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/spectrum_wave.jpg" alt="spectrum_wave" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/squirrel.jpg" alt="squirrel" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/grass4.jpg" alt="grass4" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/starfish.jpg" alt="starfish" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/stilt_hut.jpeg" alt="stilt_hut" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/water.jpg" alt="water" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/thorns.jpg" alt="thorns" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/to.jpg" alt="to" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape nature"><img src="images/trees.jpg" alt="trees" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/water3.jpg" alt="water3" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/two_birds.jpg" alt="two_birds" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/grass2.jpg" alt="grass2" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/two_rocks.jpg" alt="two_rocks" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/twomonkeys.jpeg" alt="twomonkeys" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/bike.jpg" alt="bike" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/wave_breaking.jpg" alt="wave_breaking" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/whio.jpg" alt="whio" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape nature"><img src="images/sunrise_dogs.jpeg" alt="sunrise_dogs" loading="lazy"></div>
       </div>
     </div>
   </section>
 
-  <!-- CONTACT SECTION -->
   <section id="contact">
     <h2>Get in Touch</h2>
-    <p>
-      Questions, comments etc.:
-    </p>
+    <p>Questions, comments etc.:</p>
     <a href="mailto:youremail@example.com">youremail@example.com</a>
   </section>
 
-  <!-- FOOTER -->
   <footer>
     <p>&copy; 2025 Risible Alias. All rights reserved.</p>
   </footer>
 
-  <!-- LIGHTBOX -->
   <div class="lightbox" id="lightbox">
     <button class="close-btn" id="close-lightbox">&times;</button>
     <button class="nav-btn prev-btn" id="prev-btn">&#8249;</button>
     <button class="nav-btn next-btn" id="next-btn">&#8250;</button>
-    
-    <div class="lightbox-content">
-      <img id="lightbox-img" src="" alt="Full screen view">
-    </div>
+    <div class="lightbox-content"><img id="lightbox-img" src="" alt="Full screen view"></div>
   </div>
 
-  <!-- BACK TO TOP BUTTON -->
   <button class="back-to-top" id="back-to-top" aria-label="Back to top"></button>
 
   <script>
@@ -861,29 +554,52 @@
     const menuOverlay = document.getElementById('menu-overlay');
     const menuLinks = document.querySelectorAll('.menu-link');
 
+    function closeMenu() {
+      menuToggle.classList.remove('open');
+      menuOverlay.classList.remove('open');
+      document.body.style.overflow = 'auto';
+    }
+
     menuToggle.addEventListener('click', () => {
       menuToggle.classList.toggle('open');
       menuOverlay.classList.toggle('open');
       document.body.style.overflow = menuOverlay.classList.contains('open') ? 'hidden' : 'auto';
     });
 
-    // Close menu when clicking a link
+    // Close when clicking simple links
     menuLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        menuToggle.classList.remove('open');
-        menuOverlay.classList.remove('open');
-        document.body.style.overflow = 'auto';
-      });
-    });
-
-    // Close menu when clicking overlay
-    menuOverlay.addEventListener('click', (e) => {
-      if (e.target === menuOverlay) {
-        menuToggle.classList.remove('open');
-        menuOverlay.classList.remove('open');
-        document.body.style.overflow = 'auto';
+      if(!link.classList.contains('gallery-parent')) { // Parent link handled by filter function
+          link.addEventListener('click', () => {
+              // SCROLL CORRECTION: Wait a moment for images to shift, then re-scroll
+              if(link.getAttribute('href') === '#contact') {
+                  setTimeout(() => {
+                      document.getElementById('contact').scrollIntoView({behavior: 'smooth'});
+                  }, 800); // 0.8s delay to catch lazy loads
+              }
+              closeMenu();
+          });
       }
     });
+
+    menuOverlay.addEventListener('click', (e) => {
+      if (e.target === menuOverlay) closeMenu();
+    });
+
+    // --- NEW FUNCTION: Filter from Hamburger Menu ---
+    function filterFromMenu(category) {
+        closeMenu();
+        
+        // 1. Scroll to gallery
+        const gallerySection = document.getElementById('gallery');
+        gallerySection.scrollIntoView({ behavior: 'smooth' });
+
+        // 2. Find the corresponding button and trigger the filter
+        // Note: We use setTimeout to let the scroll start before filtering animations
+        setTimeout(() => {
+            const btn = document.querySelector(`.filter-btn[onclick*="'${category}'"]`);
+            if (btn) filterGallery(category, btn);
+        }, 300);
+    }
 
     // --- IMAGE LOADING ---
     document.querySelectorAll('.gallery-item img').forEach(img => {
@@ -894,17 +610,9 @@
           img.classList.add('is-loaded');
         }, { once: true });
       }
-      img.onerror = function() {
-        console.error("Image failed: " + this.src);
-      };
     });
 
-    // --- SCROLL REVEAL ANIMATION ---
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: "0px 0px -50px 0px"
-    };
-
+    // --- SCROLL REVEAL ---
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -912,16 +620,13 @@
           observer.unobserve(entry.target);
         }
       });
-    }, observerOptions);
+    }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
 
-    document.querySelectorAll('.gallery-item').forEach(item => {
-      observer.observe(item);
-    });
+    document.querySelectorAll('.gallery-item').forEach(item => observer.observe(item));
 
     // --- GALLERY LOGIC ---
     let currentImageIndex = 0;
     let visibleImages = [];
-
     const galleryGrid = document.getElementById('gallery-grid');
     const lightbox = document.getElementById('lightbox');
     const lightboxImg = document.getElementById('lightbox-img');
@@ -933,7 +638,6 @@
       btnElement.classList.add('active');
     
       const allItems = document.querySelectorAll('.gallery-item');
-      
       allItems.forEach(item => {
         const itemCategories = item.getAttribute('data-category').toLowerCase();
         const searchCategory = category.toLowerCase();
@@ -946,7 +650,6 @@
           item.classList.add('hidden');
         }
       });
-    
       updateVisibleList();
     }
 
@@ -955,19 +658,17 @@
       visibleImages = Array.from(items);
     }
 
-    // --- LIGHTBOX ---
+    // --- LIGHTBOX & SWIPE ---
     galleryGrid.addEventListener('click', (e) => {
       const clickedItem = e.target.closest('.gallery-item');
       if (!clickedItem) return;
-
       const index = visibleImages.indexOf(clickedItem);
       if (index > -1) openLightbox(index);
     });
 
     function openLightbox(index) {
       currentImageIndex = index;
-      const imgSrc = visibleImages[currentImageIndex].querySelector('img').src;
-      lightboxImg.src = imgSrc;
+      lightboxImg.src = visibleImages[currentImageIndex].querySelector('img').src;
       lightbox.classList.add('active');
       document.body.style.overflow = 'hidden';
     }
@@ -978,7 +679,6 @@
         currentImageIndex += direction;
         if (currentImageIndex >= visibleImages.length) currentImageIndex = 0;
         else if (currentImageIndex < 0) currentImageIndex = visibleImages.length - 1;
-
         lightboxImg.src = visibleImages[currentImageIndex].querySelector('img').src;
         lightboxImg.classList.remove('fade-out');
       }, 200);
@@ -990,19 +690,10 @@
     }
 
     document.getElementById('close-lightbox').addEventListener('click', closeLightbox);
-    document.getElementById('next-btn').addEventListener('click', (e) => { 
-      e.stopPropagation(); 
-      changeImage(1); 
-    });
-    document.getElementById('prev-btn').addEventListener('click', (e) => { 
-      e.stopPropagation(); 
-      changeImage(-1); 
-    });
+    document.getElementById('next-btn').addEventListener('click', (e) => { e.stopPropagation(); changeImage(1); });
+    document.getElementById('prev-btn').addEventListener('click', (e) => { e.stopPropagation(); changeImage(-1); });
+    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
     
-    lightbox.addEventListener('click', (e) => {
-      if (e.target === lightbox) closeLightbox();
-    });
-
     document.addEventListener('keydown', (e) => {
       if (!lightbox.classList.contains('active')) return;
       if (e.key === 'Escape') closeLightbox();
@@ -1010,39 +701,19 @@
       if (e.key === 'ArrowLeft') changeImage(-1);
     });
 
-    // --- MOBILE SWIPE ---
     let touchStartX = 0;
-    let touchEndX = 0;
-    const minSwipeDistance = 50;
-
-    lightbox.addEventListener('touchstart', (e) => {
-      touchStartX = e.changedTouches[0].screenX;
-    }, {passive: true});
-
+    lightbox.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, {passive: true});
     lightbox.addEventListener('touchend', (e) => {
-      touchEndX = e.changedTouches[0].screenX;
-      handleSwipe();
+      if (Math.abs(e.changedTouches[0].screenX - touchStartX) > 50) {
+        changeImage(e.changedTouches[0].screenX < touchStartX ? 1 : -1);
+      }
     }, {passive: true});
 
-    function handleSwipe() {
-      const distance = touchEndX - touchStartX;
-      if (Math.abs(distance) > minSwipeDistance) {
-        if (distance < 0) changeImage(1);
-        else changeImage(-1);
-      }
-    }
-
-    // --- BACK TO TOP BUTTON ---
+    // --- BACK TO TOP ---
     const backToTop = document.getElementById('back-to-top');
-    
     window.addEventListener('scroll', () => {
-      if (window.scrollY > 500) {
-        backToTop.classList.add('visible');
-      } else {
-        backToTop.classList.remove('visible');
-      }
+      backToTop.classList.toggle('visible', window.scrollY > 500);
     });
-
     backToTop.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
