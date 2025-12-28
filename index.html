@@ -106,15 +106,14 @@
 
     .menu-nav {
       list-style: none;
-      /* Align to left slightly so the tree structure is visible */
-      text-align: left; 
-      max-width: 500px;
+      text-align: left;
+      /* Fixed width ensures the tree structure stays aligned */
+      width: 300px; 
       margin: 0 auto;
-      padding: 2rem;
     }
 
     .menu-nav > li {
-      margin: 2rem 0;
+      margin: 1.5rem 0;
       opacity: 0;
       transform: translateY(20px);
       transition: all 0.4s ease;
@@ -131,89 +130,74 @@
       font-weight: 300;
       letter-spacing: 0.05em;
       color: var(--text);
-      display: inline-block;
+      display: block; /* Ensure full width for click area */
     }
 
-    /* --- TREE SUBMENU STYLING --- */
-    .gallery-tree-container {
-      display: flex;
-      align-items: flex-start;
-      gap: 1.5rem;
+    /* --- REFINED TREE SUBMENU STYLING --- */
+    .gallery-tree-item {
+        position: relative;
     }
-
+    
     .gallery-parent {
-      /* Keep the main parent link large */
-      font-size: 2.5rem;
-      font-weight: 300;
-      white-space: nowrap;
+        /* The main "Gallery (All)" text */
+        display: block;
+        font-size: 2.5rem;
+        font-weight: 300;
+        margin-bottom: 0.5rem;
+        cursor: pointer;
     }
 
     .gallery-submenu {
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-      padding-top: 0.5rem; /* Align first item with parent roughly */
-      position: relative;
+        /* This creates the vertical "Spine" */
+        border-left: 1px solid rgba(255, 255, 255, 0.15);
+        margin-left: 0.8rem; /* Offset from the parent text */
+        padding-left: 0;
+        display: flex;
+        flex-direction: column;
     }
 
-    /* The Vertical Spine of the tree */
-    .gallery-submenu::before {
-      content: '';
-      position: absolute;
-      left: -1rem; /* Position to the left of the items */
-      top: 1.2rem; /* Start below the first curve top */
-      bottom: 1.2rem; /* End before the last curve bottom */
-      width: 1px;
-      background: var(--muted);
-      opacity: 0.3;
-    }
-
-    /* Individual Submenu Items */
     .gallery-submenu a {
-      font-size: 1.2rem; /* Smaller font as requested */
-      color: var(--muted);
-      position: relative;
-      transition: color 0.3s ease, transform 0.3s ease;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 300;
-      letter-spacing: 0.05em;
-      cursor: pointer;
+        position: relative;
+        font-size: 1.25rem; /* Smaller font as requested */
+        color: var(--muted);
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 300;
+        letter-spacing: 0.05em;
+        padding: 0.6rem 0 0.6rem 1.5rem; /* Space for the curve */
+        text-decoration: none;
+        display: block;
+        transition: color 0.3s ease, transform 0.3s ease;
+        cursor: pointer;
     }
 
     .gallery-submenu a:hover {
-      color: var(--accent);
-      transform: translateX(5px);
+        color: var(--accent);
+        transform: translateX(5px);
     }
 
-    /* The Curved Connector Lines */
+    /* The Elegant Curved Connector */
     .gallery-submenu a::before {
-      content: '';
-      position: absolute;
-      left: -1.5rem; /* Reach back to the spine */
-      top: 50%;
-      width: 1rem;
-      height: 50%; /* Height helps create the corner */
-      border-left: 1px solid rgba(255, 255, 255, 0.3);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-      border-bottom-left-radius: 10px; /* The Curve */
-      transform: translateY(-50%); /* Center vertically */
-      pointer-events: none;
+        content: '';
+        position: absolute;
+        left: 0; /* Starts exactly at the spine */
+        top: 0;
+        width: 1rem; /* Width of the curve */
+        height: 50%; /* Go halfway down the item height */
+        
+        /* The curve magic: transparent background, with border on bottom and left */
+        border-left: 1px solid rgba(255, 255, 255, 0.15);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        border-bottom-left-radius: 12px; /* Smooth curve radius */
+        
+        /* Hide the top part of the left border so it flows from the spine */
+        /* Actually, we want it to connect to the item above. */
+        /* To make it look like a continuous branch, we offset it slightly */
+        transform: translateY(2px); 
     }
 
-    /* Remove the vertical part for the top item to create a smooth start? 
-       Actually, standard tree lines look like forks. 
-       Let's refine to connect to the parent. */
-    
-    .gallery-tree-connector {
-        /* A special curved line connecting Parent to the spine */
-        position: absolute;
-        width: 20px;
-        height: 1px;
-        background: var(--muted);
-        opacity: 0.3;
-        top: 2rem; /* Approximate center of "Gallery" text */
-        left: -20px;
-    }
+    /* Remove the vertical line for the last item's overflowing tail if desired 
+       (Optional, but often looks cleaner to keep it simpler) */
+
 
     /* --- HERO --- */
     .hero {
@@ -284,6 +268,8 @@
     #gallery {
       padding-top: 6rem;
       min-height: 100vh;
+      /* Prevent layout thrashing */
+      contain: content; 
     }
 
     .section-header { text-align: center; margin-bottom: 3rem; padding: 0 2rem; }
@@ -368,7 +354,6 @@
     /* --- CONTACT --- */
     #contact {
       max-width: 800px; margin: 0 auto; padding: 6rem 2rem 4rem; text-align: center;
-      /* Scroll-margin prevents the header from covering content if we had a sticky header */
       scroll-margin-top: 50px; 
     }
     #contact h2 { font-size: 2rem; font-weight: 400; margin-bottom: 1.5rem; }
@@ -394,7 +379,7 @@
     }
     @media (max-width: 600px) {
       .gallery { column-count: 1; }
-      .menu-nav { padding: 1rem; text-align: left; }
+      .menu-nav { width: 100%; padding: 0 2rem; }
       .gallery-parent { font-size: 1.8rem; }
       .prev-btn, .next-btn { display: none; }
       .menu-toggle { top: 1.5rem; left: 1.5rem; }
@@ -414,19 +399,17 @@
     <ul class="menu-nav">
       <li><a href="#home" class="menu-link">Home</a></li>
       
-      <li>
-        <div class="gallery-tree-container">
-          <a href="#gallery" class="menu-link gallery-parent" onclick="filterFromMenu('all')">Gallery (All)</a>
+      <li class="gallery-tree-item">
+          <a href="#gallery" class="gallery-parent" onclick="filterFromMenu('all')">Gallery (All)</a>
           
           <div class="gallery-submenu">
              <a onclick="filterFromMenu('landscape')">Landscape</a>
              <a onclick="filterFromMenu('abstract')">Abstract</a>
              <a onclick="filterFromMenu('nature')">Nature</a>
           </div>
-        </div>
       </li>
 
-      <li><a href="#contact" class="menu-link">Contact</a></li>
+      <li><a href="#contact" class="menu-link contact-link-trigger">Contact</a></li>
     </ul>
   </div>
 
@@ -568,13 +551,12 @@
 
     // Close when clicking simple links
     menuLinks.forEach(link => {
-      if(!link.classList.contains('gallery-parent')) { // Parent link handled by filter function
-          link.addEventListener('click', () => {
-              // SCROLL CORRECTION: Wait a moment for images to shift, then re-scroll
+      if(!link.classList.contains('gallery-parent')) { 
+          link.addEventListener('click', (e) => {
+              // Special handling for Contact to prevent jumpiness
               if(link.getAttribute('href') === '#contact') {
-                  setTimeout(() => {
-                      document.getElementById('contact').scrollIntoView({behavior: 'smooth'});
-                  }, 800); // 0.8s delay to catch lazy loads
+                  e.preventDefault();
+                  smoothScrollToContact();
               }
               closeMenu();
           });
@@ -585,7 +567,40 @@
       if (e.target === menuOverlay) closeMenu();
     });
 
-    // --- NEW FUNCTION: Filter from Hamburger Menu ---
+    // --- FIX: SMART SCROLL TO CONTACT ---
+    // This watches for layout shifts (images loading) and keeps the contact section in view
+    function smoothScrollToContact() {
+        const contactSection = document.getElementById('contact');
+        
+        // 1. Initial Scroll
+        contactSection.scrollIntoView({ behavior: 'smooth' });
+        
+        // 2. "Active Anchoring": Watch for height changes in the gallery 
+        // and re-adjust the scroll if the contact section moves.
+        const galleryGrid = document.getElementById('gallery-grid');
+        let checks = 0;
+        
+        // Using ResizeObserver to detect the EXACT moment images expand
+        const resizeObserver = new ResizeObserver(() => {
+            // If we are currently trying to look at the contact section, keep it in view
+            // We use 'auto' behavior here to make the correction instant and invisible
+            contactSection.scrollIntoView({ behavior: 'auto', block: 'start' });
+            
+            checks++;
+            // Stop watching after 4 seconds (enough time for most images to load)
+            if (checks > 20) { 
+                resizeObserver.disconnect();
+            }
+        });
+        
+        resizeObserver.observe(galleryGrid);
+        
+        // Safety timeout to disconnect eventually if no resize happens
+        setTimeout(() => resizeObserver.disconnect(), 4000);
+    }
+
+
+    // --- FUNCTION: Filter from Hamburger Menu ---
     function filterFromMenu(category) {
         closeMenu();
         
@@ -594,7 +609,6 @@
         gallerySection.scrollIntoView({ behavior: 'smooth' });
 
         // 2. Find the corresponding button and trigger the filter
-        // Note: We use setTimeout to let the scroll start before filtering animations
         setTimeout(() => {
             const btn = document.querySelector(`.filter-btn[onclick*="'${category}'"]`);
             if (btn) filterGallery(category, btn);
