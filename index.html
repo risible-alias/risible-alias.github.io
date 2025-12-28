@@ -190,15 +190,19 @@
     }
 
     /* --- HERO --- */
-    .hero {
+    .hero-content {
       position: relative;
-      min-height: 100vh;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      overflow: hidden;
-      opacity: 0;
-      animation: fadeIn 1s ease forwards;
+      z-index: 2;
+      padding: 6rem 2rem; /* Increased padding to give the title more breathing room */
+      width: 100%;
+      text-align: center;
+      /* This creates a soft dark gradient that makes the text pop without looking like a solid bar */
+      background: linear-gradient(
+        to top, 
+        rgba(0, 0, 0, 0.8) 0%, 
+        rgba(0, 0, 0, 0.4) 50%, 
+        rgba(0, 0, 0, 0) 100%
+      );
     }
 
     @keyframes fadeIn {
@@ -225,8 +229,12 @@
 
     .hero-content h1 {
       margin: 0 0 1rem 0;
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      letter-spacing: 0.05em;
+      font-size: clamp(2.5rem, 6vw, 4.5rem); /* Slightly larger for a more premium feel */
+      letter-spacing: 0.1em;
+      color: #ffffff;
+      /* This shadow is the secret—it's invisible to the eye but creates 
+         contrast against bright clouds or highlights in your photo */
+      text-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
     }
 
     .hero-content p {
