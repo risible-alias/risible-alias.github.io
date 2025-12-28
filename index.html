@@ -27,9 +27,6 @@
 
     html {
       scroll-behavior: smooth;
-      /* This is the secret to fixing the jumping bug. It forces the browser 
-         to respect a margin when navigating to IDs like #contact. */
-      scroll-padding-top: 100px; 
     }
 
     body {
@@ -51,7 +48,11 @@
       transition: color 0.3s ease;
     }
 
-    /* --- HAMBURGER MENU & YOUR NEW TREE STYLES --- */
+    a:hover {
+      color: var(--accent-hover);
+    }
+
+    /* --- HAMBURGER MENU & TREE NAVIGATION --- */
     .menu-toggle {
       position: fixed;
       top: 2rem;
@@ -61,6 +62,11 @@
       border: none;
       cursor: pointer;
       padding: 0.5rem;
+      transition: opacity 0.3s ease;
+    }
+
+    .menu-toggle:hover .hamburger-line {
+      background: var(--accent);
     }
 
     .hamburger-line {
@@ -83,7 +89,7 @@
       width: 100%;
       height: 100%;
       background: rgba(20, 20, 20, 0.98);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(10px);
       z-index: 1999;
       display: flex;
       align-items: center;
@@ -101,7 +107,9 @@
     .menu-nav {
       list-style: none;
       text-align: left;
-      width: 320px;
+      /* Fixed width ensures the tree structure stays aligned */
+      width: 300px; 
+      margin: 0 auto;
     }
 
     .menu-nav > li {
@@ -116,108 +124,272 @@
     .menu-overlay.open .menu-nav > li:nth-child(2) { transition-delay: 0.2s; }
     .menu-overlay.open .menu-nav > li:nth-child(3) { transition-delay: 0.3s; }
 
-    .menu-link, .gallery-parent {
-      font-size: 2.2rem;
+    /* Main Menu Links */
+    .menu-link {
+      font-size: 2.5rem;
       font-weight: 300;
       letter-spacing: 0.05em;
       color: var(--text);
-      cursor: pointer;
+      display: block; /* Ensure full width for click area */
     }
 
-    /* --- INTEGRATED SUBMENU STYLES --- */
+    /* --- REFINED TREE SUBMENU STYLING --- */
+    .gallery-tree-item {
+        position: relative;
+    }
+    
+    .gallery-parent {
+        /* The main "Gallery (All)" text */
+        display: block;
+        font-size: 2.5rem;
+        font-weight: 300;
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+    }
+
     .gallery-submenu {
-      position: relative;
-      margin-left: 1.25rem;
-      padding-left: 1.25rem;
-      margin-top: 0.5rem;
+        /* This creates the vertical "Spine" */
+        border-left: 1px solid rgba(255, 255, 255, 0.15);
+        margin-left: 0.8rem; /* Offset from the parent text */
+        padding-left: 0;
+        display: flex;
+        flex-direction: column;
     }
 
-    /* vertical spine */
-    .gallery-submenu::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0.8rem; /* End slightly early for the last tick */
-      left: 0;
-      width: 1px;
-      background: rgba(255, 255, 255, 0.18);
-    }
-
-    /* submenu items */
     .gallery-submenu a {
-      position: relative;
-      display: block;
-      padding: 0.35rem 0 0.35rem 1.2rem;
-      font-size: 1rem; /* Slightly larger for readability */
-      color: rgba(255, 255, 255, 0.6);
-      text-decoration: none;
-      transition: color 0.2s ease, transform 0.2s ease;
-      cursor: pointer;
-    }
-
-    /* horizontal tick */
-    .gallery-submenu a::before {
-      content: "";
-      position: absolute;
-      left: -1.25rem; /* Reaches back to the vertical spine */
-      top: 50%;
-      width: 1.25rem;
-      height: 1px;
-      background: rgba(255, 255, 255, 0.18);
-      transform: translateY(-50%);
+        position: relative;
+        font-size: 1.25rem; /* Smaller font as requested */
+        color: var(--muted);
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 300;
+        letter-spacing: 0.05em;
+        padding: 0.6rem 0 0.6rem 1.5rem; /* Space for the curve */
+        text-decoration: none;
+        display: block;
+        transition: color 0.3s ease, transform 0.3s ease;
+        cursor: pointer;
     }
 
     .gallery-submenu a:hover {
-      color: #e6e6e6;
-      transform: translateX(4px);
+        color: var(--accent);
+        transform: translateX(5px);
     }
 
-    /* --- GALLERY GRID --- */
-    #gallery {
-      padding: 4rem 2rem;
+    /* The Elegant Curved Connector */
+    .gallery-submenu a::before {
+        content: '';
+        position: absolute;
+        left: 0; /* Starts exactly at the spine */
+        top: 0;
+        width: 1rem; /* Width of the curve */
+        height: 50%; /* Go halfway down the item height */
+        
+        /* The curve magic: transparent background, with border on bottom and left */
+        border-left: 1px solid rgba(255, 255, 255, 0.15);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        border-bottom-left-radius: 12px; /* Smooth curve radius */
+        
+        /* Hide the top part of the left border so it flows from the spine */
+        /* Actually, we want it to connect to the item above. */
+        /* To make it look like a continuous branch, we offset it slightly */
+        transform: translateY(2px); 
+    }
+
+    /* Remove the vertical line for the last item's overflowing tail if desired 
+       (Optional, but often looks cleaner to keep it simpler) */
+
+
+    /* --- HERO --- */
+    .hero {
+      position: relative;
       min-height: 100vh;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards;
     }
 
-    .gallery-container { max-width: 1400px; margin: 0 auto; }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    .hero img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.85);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 3rem 2rem;
+      width: 100%;
+      text-align: center;
+      background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
+    }
+
+    .hero-content h1 {
+      margin: 0 0 1rem 0;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      letter-spacing: 0.05em;
+    }
+
+    .hero-content p {
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 0.9rem 2.2rem;
+      background: var(--accent);
+      color: var(--text);
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .cta-button:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+    }
+
+    /* --- GALLERY --- */
+    #gallery {
+      padding-top: 6rem;
+      min-height: 100vh;
+      /* Prevent layout thrashing */
+      contain: content; 
+    }
+
+    .section-header { text-align: center; margin-bottom: 3rem; padding: 0 2rem; }
+    .section-header h2 { font-size: 2rem; margin-bottom: 0.5rem; letter-spacing: 0.05em; }
+
+    .filter-container { margin-bottom: 3rem; text-align: center; padding: 0 1rem; }
+    .filter-btn {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid transparent;
+      padding: 0.6rem 1.3rem;
+      margin: 0.3rem;
+      cursor: pointer;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      transition: all 0.3s ease;
+      border-radius: 4px;
+    }
+    .filter-btn:hover { color: var(--accent-hover); }
+    .filter-btn.active { color: var(--accent); border-color: var(--accent); background: rgba(47, 107, 85, 0.08); }
+
+    .gallery-container { max-width: 1400px; margin: 0 auto; padding: 0 2rem 4rem; }
     .gallery { column-count: 3; column-gap: 1.5rem; }
 
     .gallery-item {
       break-inside: avoid;
       margin-bottom: 1.5rem;
-      background: var(--surface);
+      position: relative;
+      cursor: pointer;
       border-radius: 4px;
       overflow: hidden;
+      background: var(--surface);
       opacity: 0;
-      transform: translateY(30px);
-      transition: all 0.6s ease-out;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
     }
 
     .gallery-item.visible { opacity: 1; transform: translateY(0); }
-    .gallery-item img { width: 100%; display: block; filter: grayscale(20%); transition: 0.5s; }
-    .gallery-item:hover img { filter: grayscale(0%); transform: scale(1.02); }
+    .gallery-item.hidden { display: none; }
+    
+    .gallery-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.6s ease, opacity 0.5s ease;
+      opacity: 0;
+    }
+    .gallery-item img.is-loaded { opacity: 1; }
+    .gallery-item:hover img { transform: scale(1.03); }
+
+    /* --- LIGHTBOX --- */
+    .lightbox {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 15, 15, 0.98);
+      z-index: 3000;
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .lightbox.active { display: flex; align-items: center; justify-content: center; opacity: 1; }
+    .lightbox-content { max-width: 90vw; max-height: 90vh; position: relative; }
+    .lightbox-content img {
+      max-width: 100%; max-height: 90vh; object-fit: contain;
+      box-shadow: 0 0 40px rgba(0,0,0,0.6);
+      transition: opacity 0.3s ease;
+      user-select: none;
+    }
+    .lightbox-content img.fade-out { opacity: 0.4; }
+
+    .close-btn, .nav-btn {
+      position: absolute; background: transparent; color: var(--muted);
+      border: none; cursor: pointer; font-size: 2rem; padding: 1rem; z-index: 3001;
+    }
+    .close-btn:hover, .nav-btn:hover { color: var(--accent); }
+    .close-btn { top: 1.5rem; right: 2rem; font-size: 3rem; line-height: 0.5; }
+    .prev-btn { left: 2rem; top: 50%; transform: translateY(-50%); }
+    .next-btn { right: 2rem; top: 50%; transform: translateY(-50%); }
 
     /* --- CONTACT --- */
     #contact {
-      padding: 10rem 2rem;
-      text-align: center;
-      background: rgba(0,0,0,0.1);
+      max-width: 800px; margin: 0 auto; padding: 6rem 2rem 4rem; text-align: center;
+      scroll-margin-top: 50px; 
     }
+    #contact h2 { font-size: 2rem; font-weight: 400; margin-bottom: 1.5rem; }
+    #contact p { color: var(--muted); margin-bottom: 1.5rem; }
+    #contact a { font-size: 1.1rem; color: var(--text); }
 
-    footer { padding: 4rem; text-align: center; font-size: 0.8rem; color: #666; }
-
-    /* Lightbox Styles (Standard) */
-    .lightbox {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95);
-      z-index: 3000; align-items: center; justify-content: center;
+    /* --- BACK TO TOP --- */
+    .back-to-top {
+      position: fixed; bottom: 2rem; right: 2rem; width: 50px; height: 50px;
+      background: var(--surface); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 1500;
     }
-    .lightbox.active { display: flex; }
-    .lightbox img { max-width: 90%; max-height: 80vh; }
-    .close-btn { position: absolute; top: 2rem; right: 2rem; color: white; font-size: 3rem; cursor: pointer; background: none; border: none; }
+    .back-to-top.visible { opacity: 1; pointer-events: all; }
+    .back-to-top:hover { background: var(--accent); transform: translateY(-3px); }
+    .back-to-top::before { content: '↑'; font-size: 1.5rem; color: var(--text); }
+
+    footer { text-align: center; padding: 3rem 2rem; color: #666; font-size: 0.85rem; border-top: 1px solid #444; }
+
+    @media (max-width: 900px) {
+      .gallery { column-count: 2; }
+      .gallery-parent { font-size: 2rem; }
+    }
+    @media (max-width: 600px) {
+      .gallery { column-count: 1; }
+      .menu-nav { width: 100%; padding: 0 2rem; }
+      .gallery-parent { font-size: 1.8rem; }
+      .prev-btn, .next-btn { display: none; }
+      .menu-toggle { top: 1.5rem; left: 1.5rem; }
+    }
   </style>
 </head>
+
 <body>
 
-  <button class="menu-toggle" id="menu-toggle">
+  <button class="menu-toggle" id="menu-toggle" aria-label="Menu">
     <div class="hamburger-line"></div>
     <div class="hamburger-line"></div>
     <div class="hamburger-line"></div>
@@ -225,55 +397,145 @@
 
   <div class="menu-overlay" id="menu-overlay">
     <ul class="menu-nav">
-      <li><a href="#home" class="menu-link" onclick="closeMenu()">Home</a></li>
-      <li>
-        <div class="gallery-parent" onclick="filterFromMenu('all')">Gallery (All)</div>
-        <div class="gallery-submenu">
-          <a onclick="filterFromMenu('landscape')">Landscape</a>
-          <a onclick="filterFromMenu('abstract')">Abstract</a>
-          <a onclick="filterFromMenu('nature')">Nature</a>
-        </div>
+      <li><a href="#home" class="menu-link">Home</a></li>
+      
+      <li class="gallery-tree-item">
+          <a href="#gallery" class="gallery-parent" onclick="filterFromMenu('all')">Gallery (All)</a>
+          
+          <div class="gallery-submenu">
+             <a onclick="filterFromMenu('landscape')">Landscape</a>
+             <a onclick="filterFromMenu('abstract')">Abstract</a>
+             <a onclick="filterFromMenu('nature')">Nature</a>
+          </div>
       </li>
-      <li><a href="#contact" class="menu-link" id="contact-trigger">Contact</a></li>
+
+      <li><a href="#contact" class="menu-link contact-link-trigger">Contact</a></li>
     </ul>
   </div>
 
-  <section id="home" style="height: 60vh; display: flex; align-items: center; justify-content: center; text-align: center;">
-    <div>
+  <section class="hero" id="home">
+    <img src="images/water.jpg" alt="Main photograph" loading="eager" decoding="async">
+    <div class="hero-content">
       <h1>Risible Alias</h1>
-      <p style="color: var(--muted); margin-top: 1rem;">Photographic Portfolio</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <a href="#gallery" class="cta-button">View Work</a>
     </div>
   </section>
 
   <section id="gallery">
+    <div class="section-header">
+      <h2>Selected Work</h2>
+    </div>
+
+    <div class="filter-container">
+      <button class="filter-btn active" data-filter="all" onclick="filterGallery('all', this)">All</button>
+      <button class="filter-btn" data-filter="landscape" onclick="filterGallery('landscape', this)">Landscape</button>
+      <button class="filter-btn" data-filter="abstract" onclick="filterGallery('abstract', this)">Abstract</button>
+      <button class="filter-btn" data-filter="nature" onclick="filterGallery('nature', this)">Nature</button>
+    </div>
+
     <div class="gallery-container">
       <div class="gallery" id="gallery-grid">
         <div class="gallery-item" data-category="landscape"><img src="images/sunrise.jpg" alt="sunrise" loading="lazy"></div>
         <div class="gallery-item" data-category="nature"><img src="images/bird.jpg" alt="bird" loading="lazy"></div>
-        <div class="gallery-item" data-category="abstract"><img src="images/water2.jpg" alt="water2" loading="lazy"></div>
-        <div class="gallery-item" data-category="landscape"><img src="images/boat_launch.jpg" alt="boat" loading="lazy"></div>
         <div class="gallery-item" data-category="nature"><img src="images/fern.jpg" alt="fern" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/water2.jpg" alt="water2" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/blue_shed.jpg" alt="blue_shed" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/boat_launch.jpg" alt="boat_launch" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/bridge.jpg" alt="bridge" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/flowerman.jpg" alt="flowerman" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/brown_hill.jpg" alt="brown_hill" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature abstract"><img src="images/bug.jpg" alt="bug" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/cliffs.jpg" alt="cliffs" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/coast.jpg" alt="coast" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/cross_birds.jpg" alt="cross_birds" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/day.jpg" alt="day" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract landscape"><img src="images/desert.jpg" alt="desert" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape nature"><img src="images/dogs_landing.jpg" alt="dogs_landing" loading="lazy"></div>
         <div class="gallery-item" data-category="landscape"><img src="images/road.jpg" alt="road" loading="lazy"></div>
-        </div>
+        <div class="gallery-item" data-category="abstract"><img src="images/dots.jpg" alt="dots" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/dragonfly.jpg" alt="dragonfly" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/elephant.jpg" alt="elephant" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/fallingbird.jpg" alt="fallingbird" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/ferns.jpg" alt="ferns" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape nature"><img src="images/forest.jpg" alt="forest" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/glass_wave.jpg" alt="glass_wave" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/grass1.jpg" alt="grass1" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/green_bird.jpg" alt="green_bird" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/grass3.jpg" alt="grass3" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/hawk_eagle.jpeg" alt="hawk_eagle" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/water4.jpg" alt="water4" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/heron.jpg" alt="heron" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/hidden_day.jpg" alt="hidden_day" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape abstract"><img src="images/waves.jpg" alt="waves" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/hill_sunset.jpeg" alt="hill_sunset" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/ladybug.jpg" alt="ladybug" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract landscape"><img src="images/layers.jpg" alt="layers" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/monkey.jpg" alt="monkey" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature abstract"><img src="images/mud.jpg" alt="mud" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/palms_ocean.jpeg" alt="palms_ocean" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/penguin.jpg" alt="penguin" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/pink_lakehouses.jpeg" alt="pink_lakehouses" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/reflected.jpg" alt="reflected" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/rice_paddy.jpeg" alt="rice_paddy" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape nature"><img src="images/waterfall.jpg" alt="waterfall" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/rock.jpg" alt="rock" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/rug.jpeg" alt="rug" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/bark.jpg" alt="bark" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/ruins.jpg" alt="ruins" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/salt.jpg" alt="salt" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/sealion.jpg" alt="sealion" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature abstract"><img src="images/seal.jpg" alt="seal" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/shed.jpg" alt="shed" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/monke.jpeg" alt="monke" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/skink.jpg" alt="skink" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/skull.jpg" alt="skull" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/spectrum_wave.jpg" alt="spectrum_wave" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/squirrel.jpg" alt="squirrel" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/grass4.jpg" alt="grass4" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/starfish.jpg" alt="starfish" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/stilt_hut.jpeg" alt="stilt_hut" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/water.jpg" alt="water" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/thorns.jpg" alt="thorns" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/to.jpg" alt="to" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape nature"><img src="images/trees.jpg" alt="trees" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/water3.jpg" alt="water3" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/two_birds.jpg" alt="two_birds" loading="lazy"></div>
+        <div class="gallery-item" data-category="abstract"><img src="images/grass2.jpg" alt="grass2" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/two_rocks.jpg" alt="two_rocks" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/twomonkeys.jpeg" alt="twomonkeys" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/bike.jpg" alt="bike" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape"><img src="images/wave_breaking.jpg" alt="wave_breaking" loading="lazy"></div>
+        <div class="gallery-item" data-category="nature"><img src="images/whio.jpg" alt="whio" loading="lazy"></div>
+        <div class="gallery-item" data-category="landscape nature"><img src="images/sunrise_dogs.jpeg" alt="sunrise_dogs" loading="lazy"></div>
+      </div>
     </div>
   </section>
 
   <section id="contact">
-    <h2>Connect</h2>
-    <p style="margin: 1.5rem 0; color: var(--muted);">Available for commissions and collaborations.</p>
-    <a href="mailto:alias@example.com" style="font-size: 1.2rem; border-bottom: 1px solid var(--accent);">alias@example.com</a>
+    <h2>Get in Touch</h2>
+    <p>Questions, comments etc.:</p>
+    <a href="mailto:youremail@example.com">youremail@example.com</a>
   </section>
 
-  <footer>&copy; 2025 Risible Alias</footer>
+  <footer>
+    <p>&copy; 2025 Risible Alias. All rights reserved.</p>
+  </footer>
 
   <div class="lightbox" id="lightbox">
-    <button class="close-btn">&times;</button>
-    <img src="" id="lightbox-img">
+    <button class="close-btn" id="close-lightbox">&times;</button>
+    <button class="nav-btn prev-btn" id="prev-btn">&#8249;</button>
+    <button class="nav-btn next-btn" id="next-btn">&#8250;</button>
+    <div class="lightbox-content"><img id="lightbox-img" src="" alt="Full screen view"></div>
   </div>
 
+  <button class="back-to-top" id="back-to-top" aria-label="Back to top"></button>
+
   <script>
+    // --- MENU TOGGLE ---
     const menuToggle = document.getElementById('menu-toggle');
     const menuOverlay = document.getElementById('menu-overlay');
+    const menuLinks = document.querySelectorAll('.menu-link');
 
     function closeMenu() {
       menuToggle.classList.remove('open');
@@ -287,46 +549,188 @@
       document.body.style.overflow = menuOverlay.classList.contains('open') ? 'hidden' : 'auto';
     });
 
-    // --- SMART SCROLL FOR CONTACT ---
-    document.getElementById('contact-trigger').addEventListener('click', (e) => {
-      e.preventDefault();
-      closeMenu();
-      
-      const target = document.getElementById('contact');
-      target.scrollIntoView({ behavior: 'smooth' });
-
-      // After a short delay, we verify the scroll position. If images loaded and 
-      // pushed the section, we re-anchor it.
-      setTimeout(() => {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 600);
+    // Close when clicking simple links
+    menuLinks.forEach(link => {
+      if(!link.classList.contains('gallery-parent')) { 
+          link.addEventListener('click', (e) => {
+              // Special handling for Contact to prevent jumpiness
+              if(link.getAttribute('href') === '#contact') {
+                  e.preventDefault();
+                  smoothScrollToContact();
+              }
+              closeMenu();
+          });
+      }
     });
 
-    function filterFromMenu(cat) {
-      closeMenu();
-      document.getElementById('gallery').scrollIntoView({ behavior: 'smooth' });
-      // Trigger gallery filter logic here...
+    menuOverlay.addEventListener('click', (e) => {
+      if (e.target === menuOverlay) closeMenu();
+    });
+
+    // --- FIX: SMART SCROLL TO CONTACT ---
+    // This watches for layout shifts (images loading) and keeps the contact section in view
+    function smoothScrollToContact() {
+        const contactSection = document.getElementById('contact');
+        
+        // 1. Initial Scroll
+        contactSection.scrollIntoView({ behavior: 'smooth' });
+        
+        // 2. "Active Anchoring": Watch for height changes in the gallery 
+        // and re-adjust the scroll if the contact section moves.
+        const galleryGrid = document.getElementById('gallery-grid');
+        let checks = 0;
+        
+        // Using ResizeObserver to detect the EXACT moment images expand
+        const resizeObserver = new ResizeObserver(() => {
+            // If we are currently trying to look at the contact section, keep it in view
+            // We use 'auto' behavior here to make the correction instant and invisible
+            contactSection.scrollIntoView({ behavior: 'auto', block: 'start' });
+            
+            checks++;
+            // Stop watching after 4 seconds (enough time for most images to load)
+            if (checks > 20) { 
+                resizeObserver.disconnect();
+            }
+        });
+        
+        resizeObserver.observe(galleryGrid);
+        
+        // Safety timeout to disconnect eventually if no resize happens
+        setTimeout(() => resizeObserver.disconnect(), 4000);
     }
 
-    // Scroll reveal observer
+
+    // --- FUNCTION: Filter from Hamburger Menu ---
+    function filterFromMenu(category) {
+        closeMenu();
+        
+        // 1. Scroll to gallery
+        const gallerySection = document.getElementById('gallery');
+        gallerySection.scrollIntoView({ behavior: 'smooth' });
+
+        // 2. Find the corresponding button and trigger the filter
+        setTimeout(() => {
+            const btn = document.querySelector(`.filter-btn[onclick*="'${category}'"]`);
+            if (btn) filterGallery(category, btn);
+        }, 300);
+    }
+
+    // --- IMAGE LOADING ---
+    document.querySelectorAll('.gallery-item img').forEach(img => {
+      if (img.complete) {
+        img.classList.add('is-loaded');
+      } else {
+        img.addEventListener('load', () => {
+          img.classList.add('is-loaded');
+        }, { once: true });
+      }
+    });
+
+    // --- SCROLL REVEAL ---
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('visible');
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
       });
-    }, { threshold: 0.1 });
+    }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
 
     document.querySelectorAll('.gallery-item').forEach(item => observer.observe(item));
 
-    // Lightbox Logic
-    const lb = document.getElementById('lightbox');
-    const lbImg = document.getElementById('lightbox-img');
-    document.querySelectorAll('.gallery-item img').forEach(img => {
-      img.onclick = () => {
-        lbImg.src = img.src;
-        lb.classList.add('active');
-      };
+    // --- GALLERY LOGIC ---
+    let currentImageIndex = 0;
+    let visibleImages = [];
+    const galleryGrid = document.getElementById('gallery-grid');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+
+    updateVisibleList();
+
+    function filterGallery(category, btnElement) {
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      btnElement.classList.add('active');
+    
+      const allItems = document.querySelectorAll('.gallery-item');
+      allItems.forEach(item => {
+        const itemCategories = item.getAttribute('data-category').toLowerCase();
+        const searchCategory = category.toLowerCase();
+        
+        if (searchCategory === 'all' || itemCategories.includes(searchCategory)) {
+          item.classList.remove('hidden');
+          item.classList.remove('visible');
+          setTimeout(() => item.classList.add('visible'), 50);
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+      updateVisibleList();
+    }
+
+    function updateVisibleList() {
+      const items = document.querySelectorAll('.gallery-item:not(.hidden)');
+      visibleImages = Array.from(items);
+    }
+
+    // --- LIGHTBOX & SWIPE ---
+    galleryGrid.addEventListener('click', (e) => {
+      const clickedItem = e.target.closest('.gallery-item');
+      if (!clickedItem) return;
+      const index = visibleImages.indexOf(clickedItem);
+      if (index > -1) openLightbox(index);
     });
-    document.querySelector('.close-btn').onclick = () => lb.classList.remove('active');
+
+    function openLightbox(index) {
+      currentImageIndex = index;
+      lightboxImg.src = visibleImages[currentImageIndex].querySelector('img').src;
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function changeImage(direction) {
+      lightboxImg.classList.add('fade-out');
+      setTimeout(() => {
+        currentImageIndex += direction;
+        if (currentImageIndex >= visibleImages.length) currentImageIndex = 0;
+        else if (currentImageIndex < 0) currentImageIndex = visibleImages.length - 1;
+        lightboxImg.src = visibleImages[currentImageIndex].querySelector('img').src;
+        lightboxImg.classList.remove('fade-out');
+      }, 200);
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+
+    document.getElementById('close-lightbox').addEventListener('click', closeLightbox);
+    document.getElementById('next-btn').addEventListener('click', (e) => { e.stopPropagation(); changeImage(1); });
+    document.getElementById('prev-btn').addEventListener('click', (e) => { e.stopPropagation(); changeImage(-1); });
+    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+    
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('active')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowRight') changeImage(1);
+      if (e.key === 'ArrowLeft') changeImage(-1);
+    });
+
+    let touchStartX = 0;
+    lightbox.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, {passive: true});
+    lightbox.addEventListener('touchend', (e) => {
+      if (Math.abs(e.changedTouches[0].screenX - touchStartX) > 50) {
+        changeImage(e.changedTouches[0].screenX < touchStartX ? 1 : -1);
+      }
+    }, {passive: true});
+
+    // --- BACK TO TOP ---
+    const backToTop = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => {
+      backToTop.classList.toggle('visible', window.scrollY > 500);
+    });
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   </script>
 </body>
 </html>
